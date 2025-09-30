@@ -34,7 +34,7 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:3300/admin/users/login", {
+      const res = await fetch("https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/admin/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

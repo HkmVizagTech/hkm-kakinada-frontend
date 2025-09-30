@@ -18,7 +18,7 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
 
       try {
         // Validate token using dedicated validation endpoint
-        const response = await fetch("http://localhost:3300/admin/users/validate-token", {
+        const response = await fetch("https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/admin/users/validate-token", {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,
