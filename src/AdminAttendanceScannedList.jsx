@@ -50,7 +50,7 @@ const AdminAttendanceScannedList = () => {
         });
 
         if (response.status === 401 || response.status === 403) {
-          // Token expired or invalid
+          
           localStorage.removeItem("token");
           localStorage.removeItem("role");
           navigate("/admin/login");
@@ -63,7 +63,7 @@ const AdminAttendanceScannedList = () => {
         const records = Array.isArray(data) ? data : (data.candidates || data.records || data.scannedList || []);
         
         if (Array.isArray(records)) {
-          // Map the backend field names to frontend expected names
+         
           const mappedRecords = records.map(record => ({
             ...record,
             phone: record.whatsappNumber || record.phone,

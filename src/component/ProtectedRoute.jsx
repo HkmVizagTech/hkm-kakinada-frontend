@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { Spinner, Box, Text } from "@chakra-ui/react";
 
 const ProtectedRoute = ({ allowedRoles, children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null); // null = checking, true = authenticated, false = not authenticated
+  const [isAuthenticated, setIsAuthenticated] = useState(null); 
   const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
       }
 
       try {
-        // Validate token using dedicated validation endpoint
+       
         const response = await fetch("https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/admin/users/validate-token", {
           method: "GET",
           headers: {
@@ -29,19 +29,19 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
         if (response.ok) {
           const data = await response.json();
           setIsAuthenticated(true);
-          // Use role from server response instead of localStorage for security
+          
           setUserRole(data.user.role);
-          // Update localStorage with verified role
+          
           localStorage.setItem("role", data.user.role);
         } else {
-          // Token is invalid, clear localStorage
+         
           localStorage.removeItem("token");
           localStorage.removeItem("role");
           setIsAuthenticated(false);
         }
       } catch (error) {
         console.error("Token validation error:", error);
-        // Clear localStorage on any error
+      
         localStorage.removeItem("token");
         localStorage.removeItem("role");
         setIsAuthenticated(false);
@@ -51,7 +51,7 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     validateToken();
   }, []);
 
-  // Show loading spinner while checking authentication
+ 
   if (isAuthenticated === null) {
     return (
       <Box 
@@ -67,12 +67,12 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     );
   }
 
-  // Not authenticated, redirect to login
+
   if (!isAuthenticated) {
     return <Navigate to="/admin/login" replace />;
   }
 
-  // Check if user has required role
+  
   if (!allowedRoles.includes(userRole)) {
     return (
       <Box 

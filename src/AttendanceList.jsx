@@ -56,7 +56,7 @@ const AttendanceList = () => {
         });
 
         if (response.status === 401 || response.status === 403) {
-          // Token expired or invalid
+      
           localStorage.removeItem("token");
           localStorage.removeItem("role");
           navigate("/admin/login");

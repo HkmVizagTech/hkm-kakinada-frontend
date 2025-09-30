@@ -26,7 +26,7 @@ const Attendence = () => {
   const [attendanceToken, setAttendanceToken] = useState("");
   const [attendanceDate, setAttendanceDate] = useState(""); 
   const [notFound, setNotFound] = useState(false); 
-  const [genericError, setGenericError] = useState(""); // NEW: for other errors
+  const [genericError, setGenericError] = useState(""); 
 
   const handleSubmit = async () => {
     setError("");
@@ -34,7 +34,7 @@ const Attendence = () => {
     setAttendanceToken("");
     setAttendanceDate(""); 
     setNotFound(false); 
-    setGenericError(""); // clear generic error
+    setGenericError(""); 
     const trimmedPhone = phone.trim().replace(/\D/g, "");
 
     if (!/^\d{10}$/.test(trimmedPhone)) {
@@ -67,7 +67,7 @@ const Attendence = () => {
           setPhone("");
         }
       } else {
-        // Normalize error message for "not found", "not registered", "no user"
+       
         const errMsg = data?.message?.toLowerCase() || "";
         if (
           errMsg.includes("not found") ||
@@ -159,7 +159,7 @@ const Attendence = () => {
           </Button>
         </form>
 
-        {/* Show not registered message directly, inside the card */}
+        
         {notFound && (
           <Box mt={6} p={4} borderRadius="lg" bg="orange.50" border="1px solid" borderColor="orange.200" textAlign="left">
             <Flex align="center" mb={2}>
@@ -180,7 +180,7 @@ const Attendence = () => {
           </Box>
         )}
 
-        {/* Show any other error inside the card */}
+        
         {genericError && (
           <Box mt={6} p={4} borderRadius="lg" bg="red.50" border="1px solid" borderColor="red.200" textAlign="left">
             <Flex align="center" mb={2}>
