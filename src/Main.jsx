@@ -1,0 +1,554 @@
+import React, { useState, useEffect } from "react";
+import image12 from './component/logo_harekrishnavizag.jpg'
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  Input,
+  RadioGroup,
+  Radio,
+  VStack,
+  HStack,
+  Heading,
+  useToast,
+  Select as ChakraSelect,
+  Text,
+  Container,
+  Card,
+  CardBody,
+  CardHeader,
+  Stack,
+  InputGroup,
+  InputLeftAddon,
+  Image,
+  Flex,
+  Divider,
+  Tag,
+  TagLabel
+} from "@chakra-ui/react";
+import { CalendarIcon, TimeIcon, StarIcon } from "@chakra-ui/icons";
+import Select from "react-select";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const initialState = {
+  serialNo: "",
+  name: "",
+  whatsappNumber: "",
+  email: "",
+  gender: "",
+  collegeOrWorking: "",
+  companyName: "",
+  college: "",
+  course: "",
+  year: "",
+  dob: "",
+  amount: "1.00",
+};
+
+const RAZORPAY_KEY =  "rzp_live_HBAc3tlMK0X5Xd";
+const API_BASE =  "http://localhost:3300/users";
+
+const Main = () => {
+  const toast = useToast();
+  const navigate = useNavigate();
+  const [collegeOptions, setCollegeOptions] = useState([]);
+  const [formData, setFormData] = useState(initialState);
+  const [otherCollege, setOtherCollege] = useState(""); 
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!window.Razorpay) {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      document.body.appendChild(script);
+      return () => {
+        document.body.removeChild(script);
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchColleges = async () => {
+      try {
+        const res = await axios.get(
+          "https://vrc-server-110406681774.asia-south1.run.app/college"
+        );
+        const options = res.data.map((college) => ({
+          label: college.name,
+          value: college.name,
+        }));
+
+        options.push({ label: "Other College", value: "Other College" });
+        setCollegeOptions(options);
+      } catch (err) {
+        console.error("Failed to fetch colleges:", err);
+      }
+    };
+    fetchColleges();
+  }, []);
+
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
+
+    if (field === "college" && value !== "Other College") {
+      setOtherCollege("");
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    const {
+      name,
+      whatsappNumber,
+      email,
+      gender,
+      collegeOrWorking,
+      companyName,
+      college,
+      course,
+      year,
+      dob,
+    } = formData;
+
+    if (!name.trim()) newErrors.name = "Name is required";
+    if (!dob) newErrors.dob = "Date of birth is required";
+    if (!whatsappNumber.trim()) {
+      newErrors.whatsappNumber = "WhatsApp number is required";
+    } else if (!/^\d{10}$/.test(whatsappNumber.replace(/\D/g, ""))) {
+      newErrors.whatsappNumber = "Enter a valid 10-digit number";
+    }
+    if (!email) newErrors.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) newErrors.email = "Enter a valid email";
+    if (!gender) newErrors.gender = "Please select gender";
+    if (!collegeOrWorking)
+      newErrors.collegeOrWorking = "Please select one option";
+    if (collegeOrWorking === "Working" && !companyName.trim())
+      newErrors.companyName = "Company name is required";
+    if (collegeOrWorking === "College" && !college.trim()) newErrors.college = "College name is required";
+    if (collegeOrWorking === "College" && college === "Other College" && !otherCollege.trim()) {
+      newErrors.college = "Please enter your college name";
+    }
+    if (collegeOrWorking === "College" && !course.trim()) newErrors.course = "Course is required";
+    if (collegeOrWorking === "College" && !year)
+      newErrors.year = "Year is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handlePayment = async () => {
+    const finalFormData = {
+      ...formData,
+      college:
+        formData.collegeOrWorking === "College" && formData.college === "Other College"
+          ? otherCollege
+          : formData.college,
+    };
+
+    if (!validateForm()) return;
+    setIsSubmitting(true);
+    try {
+
+     
+      const amountInPaise = 1 * 100;
+
+      const orderRes = await fetch(
+        `${API_BASE}/create-order`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: amountInPaise, formData: finalFormData }),
+        }
+      );
+      const orderData = await orderRes.json();
+      console.log("order data",orderData)
+      if (!orderData.id) throw new Error("Order creation failed");
+
+      const options = {
+        key: RAZORPAY_KEY,
+        amount: orderData.amount,
+        currency: "INR",
+        name: "Vanabhojanam Youth Festival",
+        description: "Registration Fee",
+        order_id: orderData.id,
+        handler: async (response) => {
+          try {
+            const verifyRes = await fetch(
+              `${API_BASE}/verify-payment`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_signature: response.razorpay_signature,
+                  formData: {
+                    ...finalFormData,
+                    paymentMethod: "Online",
+                    receipt: `receipt_${Date.now()}`,
+                  },
+                }),
+              }
+            );
+            const result = await verifyRes.json();
+
+            if (result.message === "success" || result.message === "Already Registered") {
+              toast({
+                title: "Registration Successful!",
+                description: "Your registration is confirmed.",
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+                position: "top-right",
+              });
+              navigate(`/thankyou/${response.razorpay_payment_id}`);
+            } else {
+              throw new Error(result.message);
+            }
+          } catch (err) {
+            toast({
+              title: "Payment verification failed",
+              description: err.message || "Try again later",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            });
+          } finally {
+            setIsSubmitting(false);
+          }
+        },
+        prefill: {
+          name: finalFormData.name,
+          email: finalFormData.email,
+          contact: `91${finalFormData.whatsappNumber}`,
+        },
+        theme: { color: "#6a38a2" },
+        modal: {
+          ondismiss: () => setIsSubmitting(false)
+        }
+      };
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response){
+        toast({
+          title: "Payment failed",
+          description: response.error && response.error.description ? response.error.description : "Try again later",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        setIsSubmitting(false);
+      });
+      rzp.open();
+    } catch (err) {
+      toast({
+        title: "Payment failed",
+        description: err.message || "Try again later",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      setIsSubmitting(false);
+    }
+  };
+
+  const customSelectStyles = {
+    control: (base) => ({
+      ...base,
+      borderColor: "#E2E8F0",
+      borderWidth: "2px",
+      borderRadius: "6px",
+      minHeight: "40px",
+      boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+      "&:hover": { borderColor: "#CBD5E0" },
+    }),
+    option: (base, state) => ({
+      ...base,
+      backgroundColor: state.isSelected
+        ? "#6a38a2"
+        : state.isFocused
+        ? "#EBF8FF"
+        : "white",
+      color: state.isSelected ? "white" : "#2D3748",
+    }),
+  };
+
+  return (
+    <Box minH="100vh" bgGradient="linear(to-b, #f5edff, #ffe6e6, #d5f5e3)" py={8}>
+      <Container maxW="2xl" px={4}>
+        <Flex
+          direction="row"
+          align="center"
+          justify="center"
+          gap={6}
+          mb={8}
+          textAlign="left"
+          flexWrap="wrap"
+        >
+          <Box
+            boxSize={{ base: '120px', md: '150px' }}
+            borderRadius="full"
+            overflow="hidden"
+            shadow="md"
+            border="2px solid #ccc"
+            flexShrink={0}
+          >
+            <Image
+              src={image12}
+              alt="Hare Krishna Movement Logo"
+              objectFit="cover"
+              width="100%"
+              height="100%"
+            />
+          </Box>
+          <Box>
+            <Heading fontSize={{ base: '2xl', md: '3xl' }} color="#6a38a2" fontWeight="bold">
+              VANABHOJANAM <br /> Youth Festival
+            </Heading>
+            <Text fontSize={{ base: 'md', md: 'lg' }} color="#6a38a2" fontWeight="semibold" mt={2} letterSpacing={1}>
+              A Day With Nature & Divine
+            </Text>
+            <Text fontSize="sm" color="#d72660" fontWeight="bold" mt={2}>
+              Organised by Hare Krishna Vaikuntham Cultural Centre
+            </Text>
+          </Box>
+        </Flex>
+        <Card boxShadow="xl" borderRadius="2xl" mb={8}>
+          <CardBody>
+            <Flex justify="space-between" align="center" wrap="wrap">
+              <Box>
+                <Tag size="lg" colorScheme="red" mb={2}>
+                  <TagLabel fontWeight="bold" fontSize="md">Date:</TagLabel>
+                  <Text ml={2} fontWeight="semibold">Sunday, 9th November 2025</Text>
+                </Tag>
+                <Tag size="lg" colorScheme="green" mb={2}>
+                  <TagLabel fontWeight="bold" fontSize="md">Venue:</TagLabel>
+                  <Text ml={2} fontWeight="semibold">HK Vaikuntham Temple, Gambhiram</Text>
+                </Tag>
+              </Box>
+              <Box textAlign="right">
+                <Tag size="lg" colorScheme="purple" mb={2}>
+                  <TagLabel fontWeight="bold" fontSize="md">Registration Fee:</TagLabel>
+                  <Text ml={2} fontWeight="bold" color='#d72660' fontSize="xl">₹99</Text>
+                </Tag>
+                <Text fontWeight="bold" fontSize="sm" color="#6a38a2">
+                  Age Limit: 16 - 31 years only
+                </Text>
+              </Box>
+            </Flex>
+            <Divider my={2} />
+            <Flex justify="space-between" align="center" wrap="wrap" mt={3}>
+              <VStack>
+                <CalendarIcon color="#6a38a2" boxSize={7} />
+                <Text fontWeight="medium" fontSize="sm">Spiritual Talk</Text>
+              </VStack>
+              <VStack>
+                <Text fontSize="2xl">🎮</Text>
+                <Text fontWeight="medium" fontSize="sm">Games</Text>
+              </VStack>
+              <VStack>
+                <Text fontSize="2xl">💃</Text>
+                <Text fontWeight="medium" fontSize="sm">Ecstatic Dances</Text>
+              </VStack>
+              <VStack>
+                <Text fontSize="2xl">🍛</Text>
+                <Text fontWeight="medium" fontSize="sm">Delicious Prasadam</Text>
+              </VStack>
+            </Flex>
+          </CardBody>
+        </Card>
+        <Card boxShadow="xl" borderRadius="2xl">
+          <CardHeader textAlign="center">
+            <Heading size="lg" color="#6a38a2">Vanabhojanam Registration Form</Heading>
+            <Text color="gray.600" mt={2}>
+              <Text as="span" color="red.500">*</Text> indicates required
+            </Text>
+          </CardHeader>
+          <CardBody>
+            <VStack spacing={6} align="stretch">
+              <FormControl isInvalid={!!errors.name}>
+                <FormLabel>Name <Text as="span" color="red.500">*</Text></FormLabel>
+                <Input
+                  placeholder="Your full name"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  borderWidth={2}
+                  _focus={{ borderColor: "#6a38a2" }}
+                />
+                <FormErrorMessage>{errors.name}</FormErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={!!errors.dob}>
+                <FormLabel>Date of Birth <Text as="span" color="red.500">*</Text></FormLabel>
+                <Input
+                  type="date"
+                  value={formData.dob}
+                  onChange={(e) => handleInputChange("dob", e.target.value)}
+                  borderWidth={2}
+                  _focus={{ borderColor: "#6a38a2" }}
+                />
+                <FormErrorMessage>{errors.dob}</FormErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={!!errors.whatsappNumber}>
+                <FormLabel>WhatsApp Number <Text as="span" color="red.500">*</Text></FormLabel>
+                <InputGroup>
+                  <InputLeftAddon bg="gray.50">+91</InputLeftAddon>
+                  <Input
+                    type="tel"
+                    placeholder="Your WhatsApp number"
+                    value={formData.whatsappNumber}
+                    onChange={(e) => handleInputChange("whatsappNumber", e.target.value)}
+                    borderWidth={2}
+                    _focus={{ borderColor: "#6a38a2" }}
+                  />
+                </InputGroup>
+                <FormErrorMessage>{errors.whatsappNumber}</FormErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={!!errors.email}>
+                <FormLabel>Email <Text as="span" color="red.500">*</Text></FormLabel>
+                <Input
+                  type="email"
+                  placeholder="your.email@example.com"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                  borderWidth={2}
+                  _focus={{ borderColor: "#6a38a2" }}
+                />
+                <FormErrorMessage>{errors.email}</FormErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={!!errors.gender}>
+                <FormLabel>Gender <Text as="span" color="red.500">*</Text></FormLabel>
+                <RadioGroup value={formData.gender} onChange={(val) => handleInputChange("gender", val)}>
+                  <HStack spacing={6}>
+                    <Radio value="Male" colorScheme="purple">Male</Radio>
+                    <Radio value="Female" colorScheme="purple">Female</Radio>
+                  </HStack>
+                </RadioGroup>
+                <FormErrorMessage>{errors.gender}</FormErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={!!errors.collegeOrWorking}>
+                <FormLabel>Are you a College Student or Working Professional? <Text as="span" color="red.500">*</Text></FormLabel>
+                <ChakraSelect
+                  value={formData.collegeOrWorking}
+                  onChange={(e) => handleInputChange("collegeOrWorking", e.target.value)}
+                  borderWidth={2}
+                  _focus={{ borderColor: "#6a38a2" }}
+                >
+                  <option value="">--Select--</option>
+                  <option value="College">College Student</option>
+                  <option value="Working">Working Professional</option>
+                </ChakraSelect>
+                <FormErrorMessage>{errors.collegeOrWorking}</FormErrorMessage>
+              </FormControl>
+              {formData.collegeOrWorking === "Working" && (
+                <FormControl isInvalid={!!errors.companyName}>
+                  <FormLabel>Company Name <Text as="span" color="red.500">*</Text></FormLabel>
+                  <Input
+                    placeholder="Your company name"
+                    value={formData.companyName}
+                    onChange={(e) => handleInputChange("companyName", e.target.value)}
+                    borderWidth={2}
+                    _focus={{ borderColor: "#6a38a2" }}
+                  />
+                  <FormErrorMessage>{errors.companyName}</FormErrorMessage>
+                </FormControl>
+              )}
+              {formData.collegeOrWorking === "College" && (
+                <FormControl isInvalid={!!errors.college}>
+                  <FormLabel>College Name <Text as="span" color="red.500">*</Text></FormLabel>
+                  <Box>
+                    <Select
+                      options={collegeOptions}
+                      value={collegeOptions.find((opt) => opt.value === formData.college)}
+                      onChange={(option) => {
+                        handleInputChange("college", option?.value || "");
+                      }}
+                      placeholder="Select your college"
+                      isClearable
+                      styles={customSelectStyles}
+                    />
+                  </Box>
+                  {formData.college === "Other College" && (
+                    <Input
+                      mt={2}
+                      placeholder="Enter your college name"
+                      value={otherCollege}
+                      onChange={(e) => setOtherCollege(e.target.value)}
+                      borderWidth={2}
+                      _focus={{ borderColor: "#6a38a2" }}
+                    />
+                  )}
+                  <FormErrorMessage>{errors.college}</FormErrorMessage>
+                </FormControl>
+              )}
+              {formData.collegeOrWorking === "College" && (
+                <FormControl isInvalid={!!errors.course}>
+                  <FormLabel>Course <Text as="span" color="red.500">*</Text></FormLabel>
+                  <Input
+                    placeholder="e.g., B.Tech, MBA"
+                    value={formData.course}
+                    onChange={(e) => handleInputChange("course", e.target.value)}
+                    borderWidth={2}
+                    _focus={{ borderColor: "#6a38a2" }}
+                  />
+                  <FormErrorMessage>{errors.course}</FormErrorMessage>
+                </FormControl>
+              )}
+              {formData.collegeOrWorking === "College" && (
+                <FormControl isInvalid={!!errors.year}>
+                  <FormLabel>Year <Text as="span" color="red.500">*</Text></FormLabel>
+                  <ChakraSelect
+                    value={formData.year}
+                    onChange={(e) => handleInputChange("year", e.target.value)}
+                    borderWidth={2}
+                    _focus={{ borderColor: "#6a38a2" }}
+                  >
+                    <option value="">--Select Year--</option>
+                    <option value="1">1st</option>
+                    <option value="2">2nd</option>
+                    <option value="3">3rd</option>
+                    <option value="4">4th</option>
+                  </ChakraSelect>
+                  <FormErrorMessage>{errors.year}</FormErrorMessage>
+                </FormControl>
+              )}
+              <Button
+                onClick={handlePayment}
+                isLoading={isSubmitting}
+                loadingText="Processing"
+                bgGradient="linear(to-r, #6a38a2, #FFD700)"
+                color="white"
+                fontWeight="semibold"
+                size="lg"
+                py={6}
+                w="full"
+                _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }}
+                transition="all 0.2s"
+                disabled={isSubmitting}
+                type="button"
+              >
+                Register Now for ₹99
+              </Button>
+              <Text textAlign="center" fontSize="md" mt={4} color="#6a38a2">
+                For any queries, contact us at <Text as="a" href="mailto:krishnapulse@gmail.com" textDecoration="underline">krishnapulse@gmail.com</Text>
+              </Text>
+            </VStack>
+          </CardBody>
+        </Card>
+        <Box mt={8} textAlign="center">
+          <Text fontSize="md" color="#6a38a2" fontWeight="semibold">
+            Hare Krishna Hare Krishna Krishna Krishna Hare Hare Hare Rama Hare Rama Rama Rama Hare Hare
+          </Text>
+        </Box>
+      </Container>
+    </Box>
+  );
+};
+
+export default Main;
