@@ -114,7 +114,15 @@ const SendCertificate = () => {
       setError('');
       console.log('Fetching eligible candidates...');
       
-      const response = await fetch(`${API_BASE_URL}/eligible-for-certificate`);
+      const token = localStorage.getItem('token');
+      
+      const response = await fetch(`${API_BASE_URL}/eligible-for-certificate`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -294,9 +302,12 @@ const SendCertificate = () => {
       const payload = candidateIds ? { candidateIds } : {};
       console.log('Sending certificates with payload:', payload);
       
+      const token = localStorage.getItem('token');
+      
       const response = await fetch(`${API_BASE_URL}/send-certificates`, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
@@ -339,9 +350,12 @@ const SendCertificate = () => {
       
       console.log(`Sending certificate to ${candidateName} (${candidateId})`);
       
+      const token = localStorage.getItem('token');
+      
       const response = await fetch(`${API_BASE_URL}/send-single-certificate`, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ candidateId })
@@ -393,9 +407,12 @@ const SendCertificate = () => {
       
       console.log(`Generating certificate for ${candidateName} (${candidateId})`);
       
+      const token = localStorage.getItem('token');
+      
       const response = await fetch(`${API_BASE_URL}/generate-single-certificate`, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ candidateId })

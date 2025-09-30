@@ -30,7 +30,11 @@ function App() {
       <Routes>
       {/* <Route path='/' element={<FestivalNotice/>}/> */}
       <Route path='/' element={<Main/>}/>
-  <Route path='/send' element={<SendCertificate/>}/>
+      <Route path='/send' element={
+        <ProtectedRoute allowedRoles={["admin"]}>
+          <SendCertificate/>
+        </ProtectedRoute>
+      }/>
       <Route path='/admin/adminqrscanner' element={
         <ProtectedRoute allowedRoles={["user", "admin"]}>
           <AdminQrScanner/>
