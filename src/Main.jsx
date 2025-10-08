@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import image12 from './component/logo_harekrishnavizag.jpg'
+import image12 from './component/vanabhojanam.jpg'
 import {
   Box,
   Button,
@@ -11,24 +11,22 @@ import {
   Radio,
   VStack,
   HStack,
+  Stack,
   Heading,
   useToast,
   Select as ChakraSelect,
   Text,
   Container,
-  Card,
-  CardBody,
-  CardHeader,
-  Stack,
   InputGroup,
   InputLeftAddon,
   Image,
   Flex,
-  Divider,
-  Tag,
-  TagLabel
+  Card,
+  CardBody,
+  CardHeader,
+  Divider
 } from "@chakra-ui/react";
-import { CalendarIcon, TimeIcon, StarIcon } from "@chakra-ui/icons";
+import { CalendarIcon } from "@chakra-ui/icons";
 import Select from "react-select";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -158,7 +156,7 @@ const Main = () => {
     try {
 
      
-      const amountInPaise = 1 * 100;
+      const amountInPaise = 99 * 100;
 
       const orderRes = await fetch(
         `${API_BASE}/create-order`,
@@ -284,12 +282,12 @@ const Main = () => {
     <Box minH="100vh" bgGradient="linear(to-b, #f5edff, #ffe6e6, #d5f5e3)" py={8}>
       <Container maxW="2xl" px={4}>
         <Flex
-          direction="row"
+          direction={{ base: "column", md: "row" }}
           align="center"
           justify="center"
           gap={6}
           mb={8}
-          textAlign="left"
+          textAlign={{ base: "center", md: "left" }}
           flexWrap="wrap"
         >
           <Box
@@ -308,7 +306,7 @@ const Main = () => {
               height="100%"
             />
           </Box>
-          <Box>
+          <Box textAlign={{ base: "center", md: "left" }}>
             <Heading fontSize={{ base: '2xl', md: '3xl' }} color="#6a38a2" fontWeight="bold">
               VANABHOJANAM <br /> Youth Festival
             </Heading>
@@ -322,27 +320,48 @@ const Main = () => {
         </Flex>
         <Card boxShadow="xl" borderRadius="2xl" mb={8}>
           <CardBody>
-            <Flex justify="space-between" align="center" wrap="wrap">
-              <Box>
-                <Tag size="lg" colorScheme="red" mb={2}>
-                  <TagLabel fontWeight="bold" fontSize="md">Date:</TagLabel>
-                  <Text ml={2} fontWeight="semibold">Sunday, 9th November 2025</Text>
-                </Tag>
-                <Tag size="lg" colorScheme="green" mb={2}>
-                  <TagLabel fontWeight="bold" fontSize="md">Venue:</TagLabel>
-                  <Text ml={2} fontWeight="semibold">HK Vaikuntham Temple, Gambhiram</Text>
-                </Tag>
-              </Box>
-              <Box textAlign="right">
-                <Tag size="lg" colorScheme="purple" mb={2}>
-                  <TagLabel fontWeight="bold" fontSize="md">Registration Fee:</TagLabel>
-                  <Text ml={2} fontWeight="bold" color='#d72660' fontSize="xl">₹99</Text>
-                </Tag>
-                <Text fontWeight="bold" fontSize="sm" color="#6a38a2">
-                  Age Limit: 16 - 31 years only
+            <Stack direction={{ base: "column", md: "row" }} justify="space-between" align="center" spacing={4}>
+              <VStack align={{ base: "center", md: "start" }} spacing={3} flex={1}>
+                <HStack>
+                  <CalendarIcon color="#6a38a2" boxSize={5} />
+                  <Text fontWeight="bold" fontSize={{ base: "md", md: "lg" }} color="#6a38a2">
+                    Sunday, 9th November 2025
+                  </Text>
+                </HStack>
+                <HStack>
+                  <Text fontSize="lg">🏛️</Text>
+                  <Text 
+                    fontWeight="semibold" 
+                    fontSize={{ base: "md", md: "lg" }} 
+                    color="gray.700"
+                    whiteSpace="nowrap"
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    maxW={{ base: "250px", md: "none" }}
+                  >
+                    HK Vaikuntham Temple, Gambhiram
+                  </Text>
+                </HStack>
+              </VStack>
+              
+              <VStack align="center" spacing={2} minW="150px">
+                <Text fontWeight="bold" fontSize="md" color="#6a38a2">
+                  Registration Fee
                 </Text>
-              </Box>
-            </Flex>
+                <Text fontWeight="black" fontSize="2xl" color="#d72660">
+                  ₹99
+                </Text>
+                <Text fontWeight="bold" fontSize="xs" color="#6a38a2" textAlign="center">
+                  Age: 16-31 years
+                </Text>
+              </VStack>
+            </Stack>
+          </CardBody>
+        </Card>
+        
+        {/* Activities Section */}
+        <Card boxShadow="xl" borderRadius="2xl" mb={8}>
+          <CardBody>
             <Divider my={2} />
             <Flex justify="space-between" align="center" wrap="wrap" mt={3}>
               <VStack>
