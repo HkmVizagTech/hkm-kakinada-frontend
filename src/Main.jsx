@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import image12 from './component/vanabhojanam.jpg'
+import image12 from './component/vanabhojanam.jpg';
+
 import {
   Box,
   Button,
@@ -30,6 +31,7 @@ import { CalendarIcon } from "@chakra-ui/icons";
 import Select from "react-select";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import natureBg from './component/vanabhojanam-nature.jpg'; 
 
 const initialState = {
   serialNo: "",
@@ -46,15 +48,15 @@ const initialState = {
   amount: "1.00",
 };
 
-const RAZORPAY_KEY =  "rzp_live_HBAc3tlMK0X5Xd";
-const API_BASE =  "https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users";
+const RAZORPAY_KEY = "rzp_live_HBAc3tlMK0X5Xd";
+const API_BASE = "https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users";
 
 const Main = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const [collegeOptions, setCollegeOptions] = useState([]);
   const [formData, setFormData] = useState(initialState);
-  const [otherCollege, setOtherCollege] = useState(""); 
+  const [otherCollege, setOtherCollege] = useState("");
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -154,9 +156,6 @@ const Main = () => {
     if (!validateForm()) return;
     setIsSubmitting(true);
     try {
-
-     
-    
       const baseAmount = formData.collegeOrWorking === "College" ? 99 : 1200;
       const amountInPaise = baseAmount * 100;
 
@@ -169,7 +168,6 @@ const Main = () => {
         }
       );
       const orderData = await orderRes.json();
-      console.log("order data",orderData)
       if (!orderData.id) throw new Error("Order creation failed");
 
       const options = {
@@ -230,7 +228,7 @@ const Main = () => {
           email: finalFormData.email,
           contact: `91${finalFormData.whatsappNumber}`,
         },
-        theme: { color: "#6a38a2" },
+        theme: { color: "#20603d" },
         modal: {
           ondismiss: () => setIsSubmitting(false)
         }
@@ -262,27 +260,40 @@ const Main = () => {
   const customSelectStyles = {
     control: (base) => ({
       ...base,
-      borderColor: "#E2E8F0",
+      borderColor: "#C9E4CA",
       borderWidth: "2px",
-      borderRadius: "6px",
+      borderRadius: "8px",
       minHeight: "40px",
-      boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-      "&:hover": { borderColor: "#CBD5E0" },
+      background: "rgba(255,255,255,0.96)",
+      boxShadow: "0 2px 12px 0 rgba(32,96,61,0.06)",
+      "&:hover": { borderColor: "#20603d" },
     }),
     option: (base, state) => ({
       ...base,
       backgroundColor: state.isSelected
-        ? "#6a38a2"
+        ? "#20603d"
         : state.isFocused
-        ? "#EBF8FF"
+        ? "#E1F7E3"
         : "white",
-      color: state.isSelected ? "white" : "#2D3748",
+      color: state.isSelected ? "white" : "#20603d",
     }),
   };
 
   return (
-    <Box minH="100vh" bgGradient="linear(to-b, #f5edff, #ffe6e6, #d5f5e3)" py={8}>
-      <Container maxW="2xl" px={4}>
+    <Box
+      minH="100vh"
+      bgImage={`url(${natureBg})`}
+      bgAttachment="fixed"
+      bgSize="cover"
+      bgPosition="center"
+      py={{ base: 2, md: 10 }}
+      px={0}
+      style={{
+        backgroundColor: "#e9f8ef",
+        backgroundBlendMode: "overlay",
+      }}
+    >
+      <Container maxW="2xl" px={2} zIndex={1}>
         <Flex
           direction={{ base: "column", md: "row" }}
           align="center"
@@ -296,9 +307,9 @@ const Main = () => {
             boxSize={{ base: '120px', md: '150px' }}
             borderRadius="full"
             overflow="hidden"
-            shadow="md"
-            border="2px solid #ccc"
-            flexShrink={0}
+            boxShadow="0 4px 24px 0 rgba(32,96,61,0.08)"
+            border="3px solid #20603d"
+            bg="white"
           >
             <Image
               src={image12}
@@ -309,10 +320,10 @@ const Main = () => {
             />
           </Box>
           <Box textAlign={{ base: "center", md: "left" }}>
-            <Heading fontSize={{ base: '2xl', md: '3xl' }} color="#6a38a2" fontWeight="bold">
+            <Heading fontSize={{ base: '2xl', md: '3xl' }} color="#20603d" fontWeight="bold">
               VANABHOJANAM <br /> Youth Festival
             </Heading>
-            <Text fontSize={{ base: 'md', md: 'lg' }} color="#6a38a2" fontWeight="semibold" mt={2} letterSpacing={1}>
+            <Text fontSize={{ base: 'md', md: 'lg' }} color="#20603d" fontWeight="semibold" mt={2} letterSpacing={1}>
               A Day With Nature & Divine
             </Text>
             <Text fontSize="sm" color="#d72660" fontWeight="bold" mt={2}>
@@ -320,13 +331,18 @@ const Main = () => {
             </Text>
           </Box>
         </Flex>
-        <Card boxShadow="xl" borderRadius="2xl" mb={8}>
+        <Card
+          bg="rgba(255,255,255,0.97)"
+          boxShadow="0 4px 24px 0 rgba(32,96,61,0.13)"
+          borderRadius="2xl"
+          mb={8}
+        >
           <CardBody>
             <Stack direction={{ base: "column", md: "row" }} justify="space-between" align="center" spacing={4}>
               <VStack align={{ base: "center", md: "start" }} spacing={3} flex={1}>
                 <HStack>
-                  <CalendarIcon color="#6a38a2" boxSize={5} />
-                  <Text fontWeight="bold" fontSize={{ base: "md", md: "lg" }} color="#6a38a2">
+                  <CalendarIcon color="#20603d" boxSize={5} />
+                  <Text fontWeight="bold" fontSize={{ base: "md", md: "lg" }} color="#20603d">
                     Sunday, 9th November 2025
                   </Text>
                 </HStack>
@@ -347,15 +363,15 @@ const Main = () => {
               </VStack>
               
               <VStack align="center" spacing={2} minW="150px">
-                <Text fontWeight="bold" fontSize="md" color="#6a38a2">
+                <Text fontWeight="bold" fontSize="md" color="#20603d">
                   Registration Fee
                 </Text>
                 {formData.collegeOrWorking === "College" ? (
                   <VStack spacing={1}>
-                    <Text fontWeight="black" fontSize="2xl" color="#d72660">
+                    <Text fontWeight="black" fontSize="2xl" color="#388e3c">
                       ₹99
                     </Text>
-                    <Text fontWeight="bold" fontSize="xs" color="#4caf50" textAlign="center">
+                    <Text fontWeight="bold" fontSize="xs" color="#388e3c" textAlign="center">
                       Student Rate
                     </Text>
                   </VStack>
@@ -364,21 +380,21 @@ const Main = () => {
                     <Text fontWeight="black" fontSize="2xl" color="#d72660">
                       ₹1200
                     </Text>
-                    <Text fontWeight="bold" fontSize="xs" color="#ff6b6b" textAlign="center">
+                    <Text fontWeight="bold" fontSize="xs" color="#d72660" textAlign="center">
                       Professional Rate
                     </Text>
                   </VStack>
                 ) : (
                   <VStack spacing={1}>
-                    <Text fontWeight="black" fontSize="xl" color="#6a38a2">
+                    <Text fontWeight="black" fontSize="xl" color="#20603d">
                       ₹99 / ₹1200
                     </Text>
-                    <Text fontWeight="bold" fontSize="xs" color="#6a38a2" textAlign="center">
+                    <Text fontWeight="bold" fontSize="xs" color="#20603d" textAlign="center">
                       Student / Professional
                     </Text>
                   </VStack>
                 )}
-                <Text fontWeight="bold" fontSize="xs" color="#6a38a2" textAlign="center">
+                <Text fontWeight="bold" fontSize="xs" color="#20603d" textAlign="center">
                   Age: 16-31 years
                 </Text>
               </VStack>
@@ -387,104 +403,119 @@ const Main = () => {
         </Card>
         
         {/* Activities Section */}
-        <Card boxShadow="xl" borderRadius="2xl" mb={8}>
+        <Card
+          bg="rgba(255,255,255,0.94)"
+          boxShadow="0 4px 24px 0 rgba(32,96,61,0.11)"
+          borderRadius="2xl"
+          mb={8}
+        >
           <CardBody>
             <Divider my={2} />
             <Flex justify="space-between" align="center" wrap="wrap" mt={3}>
               <VStack>
-                <CalendarIcon color="#6a38a2" boxSize={7} />
-                <Text fontWeight="medium" fontSize="sm">Spiritual Talk</Text>
+                <CalendarIcon color="#20603d" boxSize={7} />
+                <Text fontWeight="medium" fontSize="sm" color="#20603d">Spiritual Talk</Text>
               </VStack>
               <VStack>
                 <Text fontSize="2xl">🎮</Text>
-                <Text fontWeight="medium" fontSize="sm">Games</Text>
+                <Text fontWeight="medium" fontSize="sm" color="#20603d">Games</Text>
               </VStack>
               <VStack>
                 <Text fontSize="2xl">💃</Text>
-                <Text fontWeight="medium" fontSize="sm">Ecstatic Dances</Text>
+                <Text fontWeight="medium" fontSize="sm" color="#20603d">Ecstatic Dances</Text>
               </VStack>
               <VStack>
                 <Text fontSize="2xl">🍛</Text>
-                <Text fontWeight="medium" fontSize="sm">Delicious Prasadam</Text>
+                <Text fontWeight="medium" fontSize="sm" color="#20603d">Delicious Prasadam</Text>
               </VStack>
             </Flex>
           </CardBody>
         </Card>
-        <Card boxShadow="xl" borderRadius="2xl">
+        <Card
+          bg="rgba(255,255,255,0.99)"
+          boxShadow="0 4px 24px 0 rgba(32,96,61,0.13)"
+          borderRadius="2xl"
+        >
           <CardHeader textAlign="center">
-            <Heading size="lg" color="#6a38a2">Vanabhojanam Registration Form</Heading>
+            <Heading size="lg" color="#20603d">Vanabhojanam Registration Form</Heading>
             <Text color="gray.600" mt={2}>
               <Text as="span" color="red.500">*</Text> indicates required
             </Text>
           </CardHeader>
           <CardBody>
             <VStack spacing={6} align="stretch">
+              {/* --- form fields and controls unchanged, just update relevant colors below --- */}
               <FormControl isInvalid={!!errors.name}>
-                <FormLabel>Name <Text as="span" color="red.500">*</Text></FormLabel>
+                <FormLabel color="#20603d">Name <Text as="span" color="red.500">*</Text></FormLabel>
                 <Input
                   placeholder="Your full name"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
                   borderWidth={2}
-                  _focus={{ borderColor: "#6a38a2" }}
+                  _focus={{ borderColor: "#20603d" }}
+                  bg="rgba(255,255,255,0.93)"
                 />
                 <FormErrorMessage>{errors.name}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!errors.dob}>
-                <FormLabel>Date of Birth <Text as="span" color="red.500">*</Text></FormLabel>
+                <FormLabel color="#20603d">Date of Birth <Text as="span" color="red.500">*</Text></FormLabel>
                 <Input
                   type="date"
                   value={formData.dob}
                   onChange={(e) => handleInputChange("dob", e.target.value)}
                   borderWidth={2}
-                  _focus={{ borderColor: "#6a38a2" }}
+                  _focus={{ borderColor: "#20603d" }}
+                  bg="rgba(255,255,255,0.93)"
                 />
                 <FormErrorMessage>{errors.dob}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!errors.whatsappNumber}>
-                <FormLabel>WhatsApp Number <Text as="span" color="red.500">*</Text></FormLabel>
+                <FormLabel color="#20603d">WhatsApp Number <Text as="span" color="red.500">*</Text></FormLabel>
                 <InputGroup>
-                  <InputLeftAddon bg="gray.50">+91</InputLeftAddon>
+                  <InputLeftAddon bg="gray.100">+91</InputLeftAddon>
                   <Input
                     type="tel"
                     placeholder="Your WhatsApp number"
                     value={formData.whatsappNumber}
                     onChange={(e) => handleInputChange("whatsappNumber", e.target.value)}
                     borderWidth={2}
-                    _focus={{ borderColor: "#6a38a2" }}
+                    _focus={{ borderColor: "#20603d" }}
+                    bg="rgba(255,255,255,0.93)"
                   />
                 </InputGroup>
                 <FormErrorMessage>{errors.whatsappNumber}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!errors.email}>
-                <FormLabel>Email <Text as="span" color="red.500">*</Text></FormLabel>
+                <FormLabel color="#20603d">Email <Text as="span" color="red.500">*</Text></FormLabel>
                 <Input
                   type="email"
                   placeholder="your.email@example.com"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
                   borderWidth={2}
-                  _focus={{ borderColor: "#6a38a2" }}
+                  _focus={{ borderColor: "#20603d" }}
+                  bg="rgba(255,255,255,0.93)"
                 />
                 <FormErrorMessage>{errors.email}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!errors.gender}>
-                <FormLabel>Gender <Text as="span" color="red.500">*</Text></FormLabel>
+                <FormLabel color="#20603d">Gender <Text as="span" color="red.500">*</Text></FormLabel>
                 <RadioGroup value={formData.gender} onChange={(val) => handleInputChange("gender", val)}>
                   <HStack spacing={6}>
-                    <Radio value="Male" colorScheme="purple">Male</Radio>
-                    <Radio value="Female" colorScheme="purple">Female</Radio>
+                    <Radio value="Male" colorScheme="green">Male</Radio>
+                    <Radio value="Female" colorScheme="green">Female</Radio>
                   </HStack>
                 </RadioGroup>
                 <FormErrorMessage>{errors.gender}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!errors.collegeOrWorking}>
-                <FormLabel>Are you a College Student or Working Professional? <Text as="span" color="red.500">*</Text></FormLabel>
+                <FormLabel color="#20603d">Are you a College Student or Working Professional? <Text as="span" color="red.500">*</Text></FormLabel>
                 <ChakraSelect
                   value={formData.collegeOrWorking}
                   onChange={(e) => handleInputChange("collegeOrWorking", e.target.value)}
                   borderWidth={2}
-                  _focus={{ borderColor: "#6a38a2" }}
+                  _focus={{ borderColor: "#20603d" }}
+                  bg="rgba(255,255,255,0.93)"
                 >
                   <option value="">--Select--</option>
                   <option value="College">College Student</option>
@@ -492,12 +523,12 @@ const Main = () => {
                 </ChakraSelect>
                 <FormErrorMessage>{errors.collegeOrWorking}</FormErrorMessage>
                 {formData.collegeOrWorking === "College" && (
-                  <Box mt={2} p={3} bg="blue.50" borderRadius="md" border="1px solid" borderColor="blue.200">
+                  <Box mt={2} p={3} bg="green.50" borderRadius="md" border="1px solid" borderColor="green.200">
                     <HStack>
                       <Text fontSize="sm">ℹ️</Text>
-                      <Text fontSize="sm" color="blue.700" fontWeight="medium">
-                        <Text as="span" fontWeight="bold">Note:</Text> Student ID card is mandatory for verification at the event. 
-                        Registration fee: <Text as="span" fontWeight="bold" color="green.600">₹99</Text>
+                      <Text fontSize="sm" color="#20603d" fontWeight="medium">
+                        <Text as="span" fontWeight="bold">Note:</Text> Student ID card is mandatory for verification at the event.
+                        Registration fee: <Text as="span" fontWeight="bold" color="#388e3c">₹99</Text>
                       </Text>
                     </HStack>
                   </Box>
@@ -506,8 +537,8 @@ const Main = () => {
                   <Box mt={2} p={3} bg="orange.50" borderRadius="md" border="1px solid" borderColor="orange.200">
                     <HStack>
                       <Text fontSize="sm">💼</Text>
-                      <Text fontSize="sm" color="orange.700" fontWeight="medium">
-                        Registration fee for working professionals: <Text as="span" fontWeight="bold" color="red.600">₹1200</Text>
+                      <Text fontSize="sm" color="#d72660" fontWeight="medium">
+                        Registration fee for working professionals: <Text as="span" fontWeight="bold" color="#d72660">₹1200</Text>
                       </Text>
                     </HStack>
                   </Box>
@@ -515,20 +546,21 @@ const Main = () => {
               </FormControl>
               {formData.collegeOrWorking === "Working" && (
                 <FormControl isInvalid={!!errors.companyName}>
-                  <FormLabel>Company Name <Text as="span" color="red.500">*</Text></FormLabel>
+                  <FormLabel color="#20603d">Company Name <Text as="span" color="red.500">*</Text></FormLabel>
                   <Input
                     placeholder="Your company name"
                     value={formData.companyName}
                     onChange={(e) => handleInputChange("companyName", e.target.value)}
                     borderWidth={2}
-                    _focus={{ borderColor: "#6a38a2" }}
+                    _focus={{ borderColor: "#20603d" }}
+                    bg="rgba(255,255,255,0.93)"
                   />
                   <FormErrorMessage>{errors.companyName}</FormErrorMessage>
                 </FormControl>
               )}
               {formData.collegeOrWorking === "College" && (
                 <FormControl isInvalid={!!errors.college}>
-                  <FormLabel>College Name <Text as="span" color="red.500">*</Text></FormLabel>
+                  <FormLabel color="#20603d">College Name <Text as="span" color="red.500">*</Text></FormLabel>
                   <Box>
                     <Select
                       options={collegeOptions}
@@ -548,7 +580,8 @@ const Main = () => {
                       value={otherCollege}
                       onChange={(e) => setOtherCollege(e.target.value)}
                       borderWidth={2}
-                      _focus={{ borderColor: "#6a38a2" }}
+                      _focus={{ borderColor: "#20603d" }}
+                      bg="rgba(255,255,255,0.93)"
                     />
                   )}
                   <FormErrorMessage>{errors.college}</FormErrorMessage>
@@ -556,25 +589,27 @@ const Main = () => {
               )}
               {formData.collegeOrWorking === "College" && (
                 <FormControl isInvalid={!!errors.course}>
-                  <FormLabel>Course <Text as="span" color="red.500">*</Text></FormLabel>
+                  <FormLabel color="#20603d">Course <Text as="span" color="red.500">*</Text></FormLabel>
                   <Input
                     placeholder="e.g., B.Tech, MBA"
                     value={formData.course}
                     onChange={(e) => handleInputChange("course", e.target.value)}
                     borderWidth={2}
-                    _focus={{ borderColor: "#6a38a2" }}
+                    _focus={{ borderColor: "#20603d" }}
+                    bg="rgba(255,255,255,0.93)"
                   />
                   <FormErrorMessage>{errors.course}</FormErrorMessage>
                 </FormControl>
               )}
               {formData.collegeOrWorking === "College" && (
                 <FormControl isInvalid={!!errors.year}>
-                  <FormLabel>Year <Text as="span" color="red.500">*</Text></FormLabel>
+                  <FormLabel color="#20603d">Year <Text as="span" color="red.500">*</Text></FormLabel>
                   <ChakraSelect
                     value={formData.year}
                     onChange={(e) => handleInputChange("year", e.target.value)}
                     borderWidth={2}
-                    _focus={{ borderColor: "#6a38a2" }}
+                    _focus={{ borderColor: "#20603d" }}
+                    bg="rgba(255,255,255,0.93)"
                   >
                     <option value="">--Select Year--</option>
                     <option value="1">1st</option>
@@ -589,32 +624,32 @@ const Main = () => {
                 onClick={handlePayment}
                 isLoading={isSubmitting}
                 loadingText="Processing"
-                bgGradient="linear(to-r, #6a38a2, #FFD700)"
+                bgGradient="linear(to-r, #20603d, #43a047)"
                 color="white"
                 fontWeight="semibold"
                 size="lg"
                 py={6}
                 w="full"
-                _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }}
+                _hover={{ transform: "translateY(-2px)", boxShadow: "lg", bg: "#20603d" }}
                 transition="all 0.2s"
                 disabled={isSubmitting}
                 type="button"
               >
-                {formData.collegeOrWorking === "College" 
-                  ? "Register Now for ₹99 (Student)" 
-                  : formData.collegeOrWorking === "Working" 
-                  ? "Register Now for ₹1200 (Professional)" 
+                {formData.collegeOrWorking === "College"
+                  ? "Register Now for ₹99 (Student)"
+                  : formData.collegeOrWorking === "Working"
+                  ? "Register Now for ₹1200 (Professional)"
                   : "Register Now"
                 }
               </Button>
-              <Text textAlign="center" fontSize="md" mt={4} color="#6a38a2">
+              <Text textAlign="center" fontSize="md" mt={4} color="#20603d">
                 For any queries, contact us at <Text as="a" href="mailto:krishnapulse@gmail.com" textDecoration="underline">krishnapulse@gmail.com</Text>
               </Text>
             </VStack>
           </CardBody>
         </Card>
         <Box mt={8} textAlign="center">
-          <Text fontSize="md" color="#6a38a2" fontWeight="semibold">
+          <Text fontSize="md" color="#20603d" fontWeight="semibold">
             Hare Krishna Hare Krishna Krishna Krishna Hare Hare Hare Rama Hare Rama Rama Rama Hare Hare
           </Text>
         </Box>
