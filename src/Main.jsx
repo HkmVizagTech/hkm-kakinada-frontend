@@ -156,7 +156,9 @@ const Main = () => {
     try {
 
      
-      const amountInPaise = 1 * 100;
+    
+      const baseAmount = formData.collegeOrWorking === "College" ? 1 : 2;
+      const amountInPaise = baseAmount * 100;
 
       const orderRes = await fetch(
         `${API_BASE}/create-order`,
@@ -348,9 +350,34 @@ const Main = () => {
                 <Text fontWeight="bold" fontSize="md" color="#6a38a2">
                   Registration Fee
                 </Text>
-                <Text fontWeight="black" fontSize="2xl" color="#d72660">
-                  ₹99
-                </Text>
+                {formData.collegeOrWorking === "College" ? (
+                  <VStack spacing={1}>
+                    <Text fontWeight="black" fontSize="2xl" color="#d72660">
+                      ₹99
+                    </Text>
+                    <Text fontWeight="bold" fontSize="xs" color="#4caf50" textAlign="center">
+                      Student Rate
+                    </Text>
+                  </VStack>
+                ) : formData.collegeOrWorking === "Working" ? (
+                  <VStack spacing={1}>
+                    <Text fontWeight="black" fontSize="2xl" color="#d72660">
+                      ₹1200
+                    </Text>
+                    <Text fontWeight="bold" fontSize="xs" color="#ff6b6b" textAlign="center">
+                      Professional Rate
+                    </Text>
+                  </VStack>
+                ) : (
+                  <VStack spacing={1}>
+                    <Text fontWeight="black" fontSize="xl" color="#6a38a2">
+                      ₹99 / ₹1200
+                    </Text>
+                    <Text fontWeight="bold" fontSize="xs" color="#6a38a2" textAlign="center">
+                      Student / Professional
+                    </Text>
+                  </VStack>
+                )}
                 <Text fontWeight="bold" fontSize="xs" color="#6a38a2" textAlign="center">
                   Age: 16-31 years
                 </Text>
@@ -464,6 +491,27 @@ const Main = () => {
                   <option value="Working">Working Professional</option>
                 </ChakraSelect>
                 <FormErrorMessage>{errors.collegeOrWorking}</FormErrorMessage>
+                {formData.collegeOrWorking === "College" && (
+                  <Box mt={2} p={3} bg="blue.50" borderRadius="md" border="1px solid" borderColor="blue.200">
+                    <HStack>
+                      <Text fontSize="sm">ℹ️</Text>
+                      <Text fontSize="sm" color="blue.700" fontWeight="medium">
+                        <Text as="span" fontWeight="bold">Note:</Text> Student ID card is mandatory for verification at the event. 
+                        Registration fee: <Text as="span" fontWeight="bold" color="green.600">₹99</Text>
+                      </Text>
+                    </HStack>
+                  </Box>
+                )}
+                {formData.collegeOrWorking === "Working" && (
+                  <Box mt={2} p={3} bg="orange.50" borderRadius="md" border="1px solid" borderColor="orange.200">
+                    <HStack>
+                      <Text fontSize="sm">💼</Text>
+                      <Text fontSize="sm" color="orange.700" fontWeight="medium">
+                        Registration fee for working professionals: <Text as="span" fontWeight="bold" color="red.600">₹1200</Text>
+                      </Text>
+                    </HStack>
+                  </Box>
+                )}
               </FormControl>
               {formData.collegeOrWorking === "Working" && (
                 <FormControl isInvalid={!!errors.companyName}>
@@ -552,7 +600,12 @@ const Main = () => {
                 disabled={isSubmitting}
                 type="button"
               >
-                Register Now for ₹99
+                {formData.collegeOrWorking === "College" 
+                  ? "Register Now for ₹99 (Student)" 
+                  : formData.collegeOrWorking === "Working" 
+                  ? "Register Now for ₹1200 (Professional)" 
+                  : "Register Now"
+                }
               </Button>
               <Text textAlign="center" fontSize="md" mt={4} color="#6a38a2">
                 For any queries, contact us at <Text as="a" href="mailto:krishnapulse@gmail.com" textDecoration="underline">krishnapulse@gmail.com</Text>
