@@ -156,7 +156,7 @@ const Main = () => {
     try {
 
      
-      const amountInPaise = 99 * 100;
+      const amountInPaise = 1 * 100;
 
       const orderRes = await fetch(
         `${API_BASE}/create-order`,
