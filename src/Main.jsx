@@ -157,7 +157,7 @@ const Main = () => {
 
      
     
-      const baseAmount = formData.collegeOrWorking === "College" ? 1 : 2;
+      const baseAmount = formData.collegeOrWorking === "College" ? 99 : 1200;
       const amountInPaise = baseAmount * 100;
 
       const orderRes = await fetch(
