@@ -25,7 +25,8 @@ import {
 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import vanabhojanamLogo from './component/logo_harekrishnavizag.jpg'; 
+import vanabhojanamLogo from './component/logo_harekrishnavizag.jpg';
+import natureBg from './component/vanabhojanam-nature.jpg'; 
 
 export default function ThankYouPage() {
   const { id } = useParams();
@@ -103,7 +104,16 @@ export default function ThankYouPage() {
 
   if (status === 'loading') {
     return (
-      <Center minH="100vh" bg="gray.50">
+      <Center 
+        minH="100vh" 
+        bgImage={`url(${natureBg})`}
+        bgAttachment="fixed"
+        bgSize="cover"
+        bgPosition="center"
+        style={{
+          backgroundColor: "#e9f8ef",
+        }}
+      >
         <Spinner size="xl" color="teal.500" />
       </Center>
     );
@@ -111,8 +121,20 @@ export default function ThankYouPage() {
 
   if (status === 'pending') {
     return (
-      <Box textAlign="center" mt={20} p={6}>
-        <VStack spacing={4}>
+      <Box 
+        minH="100vh" 
+        bgImage={`url(${natureBg})`}
+        bgAttachment="fixed"
+        bgSize="cover"
+        bgPosition="center"
+        style={{
+          backgroundColor: "#e9f8ef",
+        }}
+        py={8}
+        px={4}
+      >
+        <Box textAlign="center" mt={20} p={6}>
+          <VStack spacing={4}>
           <Spinner size="xl" color="orange.500" />
           <Heading size="lg" color="orange.500">
             Payment Processing
@@ -133,14 +155,27 @@ export default function ThankYouPage() {
             Need help? Contact support with your payment ID above.
           </Text>
         </VStack>
+        </Box>
       </Box>
     );
   }
 
   if (status === 'failed') {
     return (
-      <Box textAlign="center" mt={20} p={6}>
-        <VStack spacing={4}>
+      <Box 
+        minH="100vh" 
+        bgImage={`url(${natureBg})`}
+        bgAttachment="fixed"
+        bgSize="cover"
+        bgPosition="center"
+        style={{
+          backgroundColor: "#e9f8ef",
+        }}
+        py={8}
+        px={4}
+      >
+        <Box textAlign="center" mt={20} p={6}>
+          <VStack spacing={4}>
           <Text fontSize="6xl">❌</Text>
           <Heading size="lg" color="red.500">
             Payment Failed
@@ -166,14 +201,27 @@ export default function ThankYouPage() {
             </Button>
           </VStack>
         </VStack>
+        </Box>
       </Box>
     );
   }
 
   if (status === 'invalid' || status === 'error') {
     return (
-      <Box textAlign="center" mt={20} p={6}>
-        <VStack spacing={4}>
+      <Box 
+        minH="100vh" 
+        bgImage={`url(${natureBg})`}
+        bgAttachment="fixed"
+        bgSize="cover"
+        bgPosition="center"
+        style={{
+          backgroundColor: "#e9f8ef",
+        }}
+        py={8}
+        px={4}
+      >
+        <Box textAlign="center" mt={20} p={6}>
+          <VStack spacing={4}>
           <Heading size="lg" color={status === 'invalid' ? 'red.500' : 'orange.500'}>
             {status === 'invalid' ? 'Invalid Payment' : 'Server Error'}
           </Heading>
@@ -186,12 +234,24 @@ export default function ThankYouPage() {
             Go Back to Home
           </Button>
         </VStack>
+        </Box>
       </Box>
     );
   }
 
   return (
-    <Box minH="100vh" bgGradient="linear(to-br, orange.100, yellow.100)" py={8} px={4}>
+    <Box 
+      minH="100vh" 
+      bgImage={`url(${natureBg})`}
+      bgAttachment="fixed"
+      bgSize="cover"
+      bgPosition="center"
+      py={{ base: 2, md: 8 }}
+      px={4}
+      style={{
+        backgroundColor: "#e9f8ef",
+      }}
+    >
       <Box maxW="2xl" mx="auto">
         <Flex
           align="center"
