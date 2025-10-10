@@ -80,16 +80,9 @@ const AdminQrScanner = () => {
                 console.log("📱 Sending QR token to backend:", scannedText);
                 const token = localStorage.getItem("token");
                 
-                const response = await axios.post(
-                  "http://localhost:3300/users/admin/attendance-scan",
-                  { token: scannedText },
+                const res = await fetch(
+                  "https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/admin/attendance-scan",
                   {
-                    headers: {
-                      "Authorization": `Bearer ${token}`,
-                      "Content-Type": "application/json",
-                    }
-                  }
-                );
                 console.log("✅ Backend response:", response.data);
                 setCandidate(response.data);
                 setStatus(response.data.status);

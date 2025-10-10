@@ -18,13 +18,9 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
 
       try {
        
-        const response = await fetch("http://localhost:3300/admin/users/validate-token", {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        try {
+        const response = await fetch("https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/admin/users/validate-token", {
+          method: "POST",
 
         if (response.ok) {
           const data = await response.json();

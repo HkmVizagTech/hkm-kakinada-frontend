@@ -55,7 +55,9 @@ const CandidateExport = () => {
       try {
         const token = localStorage.getItem("token");
         
-        const response = await fetch("http://localhost:3300/users", {
+        setLoading(true);
+      try {
+        const response = await fetch("https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users", {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,

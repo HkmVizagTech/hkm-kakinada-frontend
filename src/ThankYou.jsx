@@ -37,7 +37,9 @@ export default function ThankYouPage() {
   useEffect(() => {
     const verifyPayment = async () => {
       try {
-        const res = await axios.get(`http://localhost:3300/users/verify-payment/${id}`);
+        try {
+        const res = await axios.get(`https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/verify-payment/${id}`);
+        if (res.data.success) {
         if (res.data.status === 'success') {
           setCandidate(res.data.candidate);
           setStatus('success');
