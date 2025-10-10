@@ -49,6 +49,9 @@ export default function ThankYouPage() {
         if (res.data.candidate.paymentStatus === 'Paid') {
           setStatus('success');
           return 'success';
+        } else if (res.data.candidate.paymentStatus === 'Failed') {
+          setStatus('failed');
+          return 'failed';
         } else {
           setStatus('pending');
           return 'pending';
@@ -72,7 +75,7 @@ export default function ThankYouPage() {
     const verifyPaymentWithPolling = async () => {
       const result = await checkPaymentStatus(attempts === 0);
       
-      if (result === 'success') {
+      if (result === 'success' || result === 'failed') {
         if (pollInterval) clearInterval(pollInterval);
         return;
       }
@@ -129,6 +132,39 @@ export default function ThankYouPage() {
           <Text fontSize="xs" color="gray.400">
             Need help? Contact support with your payment ID above.
           </Text>
+        </VStack>
+      </Box>
+    );
+  }
+
+  if (status === 'failed') {
+    return (
+      <Box textAlign="center" mt={20} p={6}>
+        <VStack spacing={4}>
+          <Text fontSize="6xl">❌</Text>
+          <Heading size="lg" color="red.500">
+            Payment Failed
+          </Heading>
+          <Text>
+            Your payment was not successful. This could be due to payment cancellation, 
+            insufficient funds, or a technical issue.
+          </Text>
+          {candidate?.paymentFailureReason && (
+            <Text fontSize="sm" color="gray.600" p={3} bg="gray.100" borderRadius="md">
+              Reason: {candidate.paymentFailureReason}
+            </Text>
+          )}
+          <Text fontSize="sm" color="gray.600">
+            Payment ID: {id}
+          </Text>
+          <VStack spacing={3}>
+            <Button colorScheme="teal" onClick={() => navigate('/')}>
+              Try Registration Again
+            </Button>
+            <Button colorScheme="gray" variant="outline" onClick={() => window.location.href = 'mailto:krishnapulse@gmail.com'}>
+              Contact Support
+            </Button>
+          </VStack>
         </VStack>
       </Box>
     );
