@@ -46,10 +46,12 @@ const initialState = {
   year: "",
   dob: "",
   amount: "1.00",
+  studentIdCard: null,
+  studentIdCardPreview: "",
 };
 
 const RAZORPAY_KEY = "rzp_live_HBAc3tlMK0X5Xd";
-const API_BASE = "https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users";
+const API_BASE = "http://localhost:3300/users";
 
 const Main = () => {
   const toast = useToast();
@@ -92,6 +94,15 @@ const Main = () => {
     fetchColleges();
   }, []);
 
+  // Clean up preview URL on unmount
+  useEffect(() => {
+    return () => {
+      if (formData.studentIdCardPreview) {
+        URL.revokeObjectURL(formData.studentIdCardPreview);
+      }
+    };
+  }, [formData.studentIdCardPreview]);
+
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
@@ -101,6 +112,61 @@ const Main = () => {
     if (field === "college" && value !== "Other College") {
       setOtherCollege("");
     }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        toast({
+          title: "Invalid file type",
+          description: "Please upload a JPG, PNG, or WebP image file",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please upload an image smaller than 5MB",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setFormData(prev => ({
+        ...prev,
+        studentIdCard: file,
+        studentIdCardPreview: previewUrl
+      }));
+      
+      // Clear error if file is selected
+      if (errors.studentIdCard) {
+        setErrors(prev => ({ ...prev, studentIdCard: "" }));
+      }
+    }
+  };
+
+  const removeFile = () => {
+    // Clean up the preview URL
+    if (formData.studentIdCardPreview) {
+      URL.revokeObjectURL(formData.studentIdCardPreview);
+    }
+    setFormData(prev => ({
+      ...prev,
+      studentIdCard: null,
+      studentIdCardPreview: ""
+    }));
   };
 
   const validateForm = () => {
@@ -116,6 +182,7 @@ const Main = () => {
       course,
       year,
       dob,
+      studentIdCard,
     } = formData;
 
     if (!name.trim()) newErrors.name = "Name is required";
@@ -139,6 +206,8 @@ const Main = () => {
     if (collegeOrWorking === "College" && !course.trim()) newErrors.course = "Course is required";
     if (collegeOrWorking === "College" && !year)
       newErrors.year = "Year is required";
+    if (collegeOrWorking === "College" && !studentIdCard)
+      newErrors.studentIdCard = "Please upload your student ID card";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -156,18 +225,34 @@ const Main = () => {
     if (!validateForm()) return;
     setIsSubmitting(true);
     try {
-      const baseAmount = formData.collegeOrWorking === "College" ? 99 : 1200;
+      const baseAmount = formData.collegeOrWorking === "College" ? 1 : 1200;
       const amountInPaise = baseAmount * 100;
 
-      const orderRes = await fetch(
-        `${API_BASE}/create-order`,
-        {
+      let orderData;
+      
+      // Use different endpoint based on whether student uploaded ID card
+      if (formData.collegeOrWorking === "College" && formData.studentIdCard) {
+        // Use multipart form data for file upload
+        const formDataToSend = new FormData();
+        formDataToSend.append('amount', amountInPaise);
+        formDataToSend.append('formData', JSON.stringify(finalFormData));
+        formDataToSend.append('studentIdCard', formData.studentIdCard);
+
+        const orderRes = await fetch(`${API_BASE}/create-order-with-file`, {
+          method: "POST",
+          body: formDataToSend,
+        });
+        orderData = await orderRes.json();
+      } else {
+        // Use regular JSON endpoint
+        const orderRes = await fetch(`${API_BASE}/create-order`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ amount: amountInPaise, formData: finalFormData }),
-        }
-      );
-      const orderData = await orderRes.json();
+        });
+        orderData = await orderRes.json();
+      }
+      
       if (!orderData.id) throw new Error("Order creation failed");
 
       const options = {
@@ -618,6 +703,49 @@ const Main = () => {
                     <option value="4">4th</option>
                   </ChakraSelect>
                   <FormErrorMessage>{errors.year}</FormErrorMessage>
+                </FormControl>
+              )}
+              {formData.collegeOrWorking === "College" && (
+                <FormControl isInvalid={!!errors.studentIdCard}>
+                  <FormLabel color="#20603d">Student ID Card <Text as="span" color="red.500">*</Text></FormLabel>
+                  <Text fontSize="sm" color="gray.600" mb={2}>
+                    Please upload a clear photo of your student ID card (JPG, PNG, WebP - Max 5MB)
+                  </Text>
+                  <Input
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    onChange={handleFileChange}
+                    borderWidth={2}
+                    _focus={{ borderColor: "#20603d" }}
+                    bg="rgba(255,255,255,0.93)"
+                    p={1}
+                  />
+                  <FormErrorMessage>{errors.studentIdCard}</FormErrorMessage>
+                  
+                  {formData.studentIdCardPreview && (
+                    <Box mt={3}>
+                      <Text fontSize="sm" color="gray.700" mb={2}>Preview:</Text>
+                      <Flex align="center" gap={3}>
+                        <Image
+                          src={formData.studentIdCardPreview}
+                          alt="ID Card Preview"
+                          maxH="120px"
+                          maxW="200px"
+                          objectFit="cover"
+                          border="1px solid #e2e8f0"
+                          borderRadius="md"
+                        />
+                        <Button
+                          size="sm"
+                          colorScheme="red"
+                          variant="outline"
+                          onClick={removeFile}
+                        >
+                          Remove
+                        </Button>
+                      </Flex>
+                    </Box>
+                  )}
                 </FormControl>
               )}
               <Button

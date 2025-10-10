@@ -25,6 +25,7 @@ import {
   VStack,
   Divider,
   Avatar,
+  Image,
 } from "@chakra-ui/react";
 import { CheckCircleIcon, WarningIcon, TimeIcon, EmailIcon, PhoneIcon, DownloadIcon } from "@chakra-ui/icons";
 import * as XLSX from "xlsx";
@@ -54,7 +55,7 @@ const CandidateExport = () => {
       try {
         const token = localStorage.getItem("token");
         
-        const response = await fetch("https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users", {
+        const response = await fetch("http://localhost:3300/users", {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -140,6 +141,7 @@ const CandidateExport = () => {
         "Registration Date": row.registrationDate
           ? new Date(row.registrationDate).toLocaleString()
           : "",
+        "Student ID Card URL": row.studentIdCardUrl || "N/A",
         Attendance: row.attendance ? "Yes" : "No",
         "Receipt No": row.receipt,
       }))
@@ -292,6 +294,7 @@ const CandidateExport = () => {
                 <Th>College/Company</Th>
                 <Th>Course</Th>
                 <Th>Year</Th>
+                <Th>ID Card</Th>
                 <Th>Reg Date</Th>
                 <Th>Payment</Th>
                 <Th>Payment Method</Th>
@@ -334,6 +337,69 @@ const CandidateExport = () => {
                   </Td>
                   <Td>{candidate.course || "-"}</Td>
                   <Td>{candidate.year || "-"}</Td>
+                  <Td>
+                    {candidate.studentIdCardUrl ? (
+                      <VStack spacing={2} align="center">
+                        <Image
+                          src={candidate.studentIdCardUrl}
+                          alt="Student ID Card"
+                          boxSize="60px"
+                          objectFit="cover"
+                          borderRadius="md"
+                          border="1px solid"
+                          borderColor="gray.200"
+                          cursor="pointer"
+                          onClick={() => window.open(candidate.studentIdCardUrl, '_blank')}
+                          _hover={{ transform: "scale(1.05)", boxShadow: "md" }}
+                          transition="all 0.2s"
+                        />
+                        <Button
+                          size="xs"
+                          colorScheme="blue"
+                          variant="outline"
+                          onClick={() => window.open(candidate.studentIdCardUrl, '_blank')}
+                        >
+                          View Full
+                        </Button>
+                      </VStack>
+                    ) : candidate.collegeOrWorking === "College" ? (
+                      <VStack spacing={1}>
+                        <Box 
+                          boxSize="60px" 
+                          bg="red.50" 
+                          border="2px dashed" 
+                          borderColor="red.200" 
+                          borderRadius="md"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <WarningIcon color="red.400" />
+                        </Box>
+                        <Text fontSize="xs" color="red.500">
+                          No ID Card
+                        </Text>
+                      </VStack>
+                    ) : (
+                      <VStack spacing={1}>
+                        <Box 
+                          boxSize="60px" 
+                          bg="gray.50" 
+                          border="1px solid" 
+                          borderColor="gray.200" 
+                          borderRadius="md"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <Text fontSize="xs" color="gray.400">N/A</Text>
+                        </Box>
+                        <Text fontSize="xs" color="gray.400">
+                          Working Prof.
+                        </Text>
+                      </VStack>
+                    )}
+                  </Td>
                   <Td>
                     {candidate.registrationDate
                       ? new Date(candidate.registrationDate).toLocaleDateString()

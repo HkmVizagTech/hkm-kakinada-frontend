@@ -30,7 +30,7 @@ const Register = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await fetch("https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/admin/users/register", {
+      const res = await fetch("http://localhost:3300/admin/users/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

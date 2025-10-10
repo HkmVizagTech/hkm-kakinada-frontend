@@ -44,7 +44,7 @@ const Attendence = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/mark-attendance", {
+      const res = await fetch("http://localhost:3300/users/mark-attendance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ whatsappNumber: trimmedPhone }),
