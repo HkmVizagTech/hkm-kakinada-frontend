@@ -226,7 +226,7 @@ const Main = () => {
     if (!validateForm()) return;
     setIsSubmitting(true);
     try {
-      const baseAmount = formData.collegeOrWorking === "College" ? 1 : 1200;
+      const baseAmount = formData.collegeOrWorking === "College" ? 1 : 1;
       const amountInPaise = baseAmount * 100;
 
       let orderData;
