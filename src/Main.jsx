@@ -51,7 +51,7 @@ const initialState = {
 };
 
 const RAZORPAY_KEY = "rzp_live_HBAc3tlMK0X5Xd";
-// API Base URL
+
 const API_BASE = "https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users";
 
 const Main = () => {
@@ -95,7 +95,7 @@ const Main = () => {
     fetchColleges();
   }, []);
 
-  // Clean up preview URL on unmount
+
   useEffect(() => {
     return () => {
       if (formData.studentIdCardPreview) {
@@ -118,7 +118,7 @@ const Main = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
+      
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
         toast({
@@ -131,7 +131,7 @@ const Main = () => {
         return;
       }
 
-      // Validate file size (max 5MB)
+     
       if (file.size > 5 * 1024 * 1024) {
         toast({
           title: "File too large",
@@ -143,7 +143,7 @@ const Main = () => {
         return;
       }
 
-      // Create preview URL
+
       const previewUrl = URL.createObjectURL(file);
       setFormData(prev => ({
         ...prev,
@@ -151,7 +151,7 @@ const Main = () => {
         studentIdCardPreview: previewUrl
       }));
       
-      // Clear error if file is selected
+    
       if (errors.studentIdCard) {
         setErrors(prev => ({ ...prev, studentIdCard: "" }));
       }
@@ -159,7 +159,7 @@ const Main = () => {
   };
 
   const removeFile = () => {
-    // Clean up the preview URL
+    
     if (formData.studentIdCardPreview) {
       URL.revokeObjectURL(formData.studentIdCardPreview);
     }
@@ -226,14 +226,14 @@ const Main = () => {
     if (!validateForm()) return;
     setIsSubmitting(true);
     try {
-      const baseAmount = formData.collegeOrWorking === "College" ? 1 : 1;
+      const baseAmount = formData.collegeOrWorking === "College" ? 99 : 1200;
       const amountInPaise = baseAmount * 100;
 
       let orderData;
       
-      // Use different endpoint based on whether student uploaded ID card
+      
       if (formData.collegeOrWorking === "College" && formData.studentIdCard) {
-        // Use multipart form data for file upload
+    
         const formDataToSend = new FormData();
         formDataToSend.append('amount', amountInPaise);
         formDataToSend.append('formData', JSON.stringify(finalFormData));
@@ -245,7 +245,7 @@ const Main = () => {
         });
         orderData = await orderRes.json();
       } else {
-        // Use regular JSON endpoint
+        
         const orderRes = await fetch(`${API_BASE}/create-order`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -488,7 +488,7 @@ const Main = () => {
           </CardBody>
         </Card>
         
-        {/* Activities Section */}
+      
         <Card
           bg="rgba(255,255,255,0.94)"
           boxShadow="0 4px 24px 0 rgba(32,96,61,0.11)"
@@ -530,7 +530,7 @@ const Main = () => {
           </CardHeader>
           <CardBody>
             <VStack spacing={6} align="stretch">
-              {/* --- form fields and controls unchanged, just update relevant colors below --- */}
+            
               <FormControl isInvalid={!!errors.name}>
                 <FormLabel color="#20603d">Name <Text as="span" color="red.500">*</Text></FormLabel>
                 <Input
