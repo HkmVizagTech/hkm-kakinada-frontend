@@ -182,13 +182,13 @@ const CandidateExport = () => {
       let updateData = {};
       switch (action) {
         case 'accept':
-          updateData = { paymentStatus: 'Paid', adminAction: 'Accepted' };
+          updateData = { paymentStatus: 'Paid', adminAction: 'Accepted', adminActionDate: new Date() };
           break;
         case 'reject':
-          updateData = { paymentStatus: 'Failed', adminAction: 'Rejected' };
+          updateData = { paymentStatus: 'Failed', adminAction: 'Rejected', adminActionDate: new Date() };
           break;
         case 'refund':
-          updateData = { paymentStatus: 'Refunded', adminAction: 'Refunded' };
+          updateData = { paymentStatus: 'Refunded', adminAction: 'Refunded', adminActionDate: new Date() };
           break;
         default:
           console.error('Invalid action:', action);
@@ -349,6 +349,7 @@ const CandidateExport = () => {
                 <option value="Paid">Paid</option>
                 <option value="Pending">Pending</option>
                 <option value="Failed">Failed</option>
+                <option value="Refunded">Refunded</option>
               </Select>
             </FormControl>
             <FormControl w="150px">
@@ -406,6 +407,9 @@ const CandidateExport = () => {
           </Badge>
           <Badge colorScheme="red" fontSize="md">
             Failed: {(Array.isArray(filteredData) ? filteredData : []).filter((c) => c.paymentStatus === "Failed").length}
+          </Badge>
+          <Badge colorScheme="orange" fontSize="md">
+            Refunded: {(Array.isArray(filteredData) ? filteredData : []).filter((c) => c.paymentStatus === "Refunded").length}
           </Badge>
         </HStack>
 
