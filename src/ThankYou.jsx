@@ -66,7 +66,7 @@ export default function ThankYouPage() {
 
   useEffect(() => {
     let attempts = 0;
-    const maxAttempts = 20; // Extended to 60 seconds (20 attempts * 3 seconds) - enough for auto-checker to run
+    const maxAttempts = 10; // 30 seconds (10 attempts * 3 seconds) - auto-checker runs every 10 seconds
     let pollInterval;
 
     const verifyPaymentWithPolling = async () => {
@@ -88,7 +88,7 @@ export default function ThankYouPage() {
       // First check immediately
       verifyPaymentWithPolling();
       
-      // Then poll every 3 seconds for up to 60 seconds
+      // Then poll every 3 seconds for up to 30 seconds
       pollInterval = setInterval(verifyPaymentWithPolling, 3000);
     }
 
@@ -115,7 +115,7 @@ export default function ThankYouPage() {
             Payment Processing
           </Heading>
           <Text>
-            Your payment is being processed. This usually takes 1-2 minutes.
+            Your payment is being processed. This usually takes 10-20 seconds.
           </Text>
           <Text fontSize="sm" color="gray.600">
             Payment ID: {id}
