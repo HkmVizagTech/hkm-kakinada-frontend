@@ -285,6 +285,10 @@ const CandidateExport = () => {
           : "",
         "Student ID Card URL": row.studentIdCardUrl || "N/A",
         Attendance: row.attendance ? "Yes" : "No",
+        "Admin Action": row.adminAction || "Pending",
+        "Admin Action Date": row.adminActionDate 
+          ? new Date(row.adminActionDate).toLocaleString()
+          : "",
         "Receipt No": row.receipt,
       }))
     );
@@ -454,6 +458,7 @@ const CandidateExport = () => {
                 <Th>Payment</Th>
                 <Th>Payment Method</Th>
                 <Th>Attendance</Th>
+                <Th>Admin Action</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -591,6 +596,27 @@ const CandidateExport = () => {
                       <CheckCircleIcon color="green.400" />
                     ) : (
                       <WarningIcon color="gray.400" />
+                    )}
+                  </Td>
+                  
+                  {/* Admin Action Column */}
+                  <Td>
+                    {candidate.adminAction ? (
+                      <Tag
+                        size="sm"
+                        colorScheme={
+                          candidate.adminAction === 'Accepted' ? 'green' : 
+                          candidate.adminAction === 'Rejected' ? 'red' : 
+                          candidate.adminAction === 'Refunded' ? 'orange' : 'gray'
+                        }
+                        variant="solid"
+                      >
+                        {candidate.adminAction}
+                      </Tag>
+                    ) : (
+                      <Tag size="sm" colorScheme="gray" variant="outline">
+                        Pending
+                      </Tag>
                     )}
                   </Td>
                  
@@ -901,6 +927,40 @@ const CandidateExport = () => {
                         <Text fontSize="sm" fontWeight="medium">
                           {selectedCandidate.receipt || 'N/A'}
                         </Text>
+                      </GridItem>
+
+                      <GridItem>
+                        <Text fontSize="sm" color="gray.500">Admin Action</Text>
+                        <HStack>
+                          {selectedCandidate.adminAction ? (
+                            <>
+                              {selectedCandidate.adminAction === 'Accepted' && <CheckCircleIcon color="green.500" />}
+                              {selectedCandidate.adminAction === 'Rejected' && <CloseIcon color="red.500" />}
+                              {selectedCandidate.adminAction === 'Refunded' && <RepeatIcon color="orange.500" />}
+                              <Text 
+                                fontSize="sm" 
+                                color={
+                                  selectedCandidate.adminAction === 'Accepted' ? 'green.600' : 
+                                  selectedCandidate.adminAction === 'Rejected' ? 'red.600' : 
+                                  selectedCandidate.adminAction === 'Refunded' ? 'orange.600' : 'gray.600'
+                                }
+                                fontWeight="medium"
+                              >
+                                {selectedCandidate.adminAction}
+                              </Text>
+                            </>
+                          ) : (
+                            <>
+                              <WarningIcon color="gray.400" />
+                              <Text fontSize="sm" color="gray.600" fontWeight="medium">Pending</Text>
+                            </>
+                          )}
+                        </HStack>
+                        {selectedCandidate.adminActionDate && (
+                          <Text fontSize="xs" color="gray.400" mt={1}>
+                            {new Date(selectedCandidate.adminActionDate).toLocaleString()}
+                          </Text>
+                        )}
                       </GridItem>
                     </Grid>
                   </Box>
