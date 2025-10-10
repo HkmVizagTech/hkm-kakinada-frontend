@@ -20,7 +20,7 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
         console.log("🔐 Validating token:", token);
         console.log("🎭 Stored role:", role);
         
-        const response = await fetch("http://localhost:3300/admin/users/validate-token", {
+        const response = await fetch("https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/admin/users/validate-token", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
