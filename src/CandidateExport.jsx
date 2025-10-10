@@ -23,8 +23,40 @@ import {
   HStack,
   VStack,
   Image,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  useDisclosure,
+  Divider,
+  Grid,
+  GridItem,
+  Icon,
+  Avatar,
+  useToast,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
-import { CheckCircleIcon, WarningIcon, TimeIcon, PhoneIcon, DownloadIcon } from "@chakra-ui/icons";
+import { 
+  CheckCircleIcon, 
+  WarningIcon, 
+  TimeIcon, 
+  PhoneIcon, 
+  DownloadIcon,
+  EmailIcon,
+  CalendarIcon,
+  ViewIcon,
+  CheckIcon,
+  CloseIcon,
+  RepeatIcon,
+} from "@chakra-ui/icons";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { useNavigate } from "react-router-dom";
@@ -34,6 +66,7 @@ const statusColors = {
   Paid: "green",
   Pending: "yellow",
   Failed: "red",
+  Refunded: "orange",
 };
 
 const CandidateExport = () => {
@@ -44,8 +77,19 @@ const CandidateExport = () => {
   const [loading, setLoading] = useState(true);
   const [filteredPaymentStatus, setFilteredPaymentStatus] = useState("");
   const [search, setSearch] = useState("");
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [actionLoading, setActionLoading] = useState({});
 
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { 
+    isOpen: isAlertOpen, 
+    onOpen: onAlertOpen, 
+    onClose: onAlertClose 
+  } = useDisclosure();
+  const [alertAction, setAlertAction] = useState(null);
+  const cancelRef = React.useRef();
+  const toast = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -114,6 +158,87 @@ const CandidateExport = () => {
   });
 
   const uniqueColleges = [...new Set((Array.isArray(data) ? data : []).map((c) => c.college).filter(Boolean))];
+
+  const handleCandidateClick = (candidate) => {
+    setSelectedCandidate(candidate);
+    onOpen();
+  };
+
+  const handleAction = async (action, candidateId) => {
+    setAlertAction({ action, candidateId });
+    onAlertOpen();
+  };
+
+  const confirmAction = async () => {
+    if (!alertAction) return;
+    
+    const { action, candidateId } = alertAction;
+    setActionLoading(prev => ({ ...prev, [candidateId]: true }));
+    
+    try {
+      const token = localStorage.getItem("token");
+      const endpoint = `https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/${candidateId}`;
+      
+      let updateData = {};
+      switch (action) {
+        case 'accept':
+          updateData = { paymentStatus: 'Paid', adminAction: 'Accepted' };
+          break;
+        case 'reject':
+          updateData = { paymentStatus: 'Failed', adminAction: 'Rejected' };
+          break;
+        case 'refund':
+          updateData = { paymentStatus: 'Refunded', adminAction: 'Refunded' };
+          break;
+      }
+
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (response.ok) {
+        // Update local data
+        setData(prevData => 
+          prevData.map(candidate => 
+            candidate._id === candidateId 
+              ? { ...candidate, ...updateData }
+              : candidate
+          )
+        );
+        
+        // Update selected candidate if it's the same one
+        if (selectedCandidate?._id === candidateId) {
+          setSelectedCandidate(prev => ({ ...prev, ...updateData }));
+        }
+
+        toast({
+          title: `Candidate ${action}ed successfully`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        throw new Error(`Failed to ${action} candidate`);
+      }
+    } catch (error) {
+      toast({
+        title: `Failed to ${alertAction.action} candidate`,
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setActionLoading(prev => ({ ...prev, [candidateId]: false }));
+      onAlertClose();
+      setAlertAction(null);
+    }
+  };
 
   const exportToExcel = () => {
     const dataToExport = Array.isArray(filteredData) ? filteredData : [];
@@ -282,6 +407,15 @@ const CandidateExport = () => {
         </HStack>
 
         <Box overflowX="auto" rounded="md" boxShadow="md" bg="white" p={2}>
+          <Box mb={2} p={2} bg="blue.50" borderRadius="md" border="1px solid" borderColor="blue.200">
+            <HStack>
+              <Icon as={ViewIcon} color="blue.500" boxSize={4} />
+              <Text fontSize="sm" color="blue.700" fontWeight="medium">
+                Click on any candidate row to view detailed information and take actions
+              </Text>
+            </HStack>
+          </Box>
+          
           <Table variant="simple" size="sm">
             <Thead bg="gray.100">
               <Tr>
@@ -301,7 +435,12 @@ const CandidateExport = () => {
             </Thead>
             <Tbody>
               {filteredData?.map((candidate, idx) => (
-                <Tr key={candidate._id} _hover={{ bg: "gray.50" }}>
+                <Tr 
+                  key={candidate._id} 
+                  _hover={{ bg: "blue.50", cursor: "pointer" }} 
+                  onClick={() => handleCandidateClick(candidate)}
+                  transition="all 0.2s"
+                >
                   <Td>{idx + 1}</Td>
                   <Td>
                     <HStack>
@@ -446,6 +585,388 @@ const CandidateExport = () => {
             </Tbody>
           </Table>
         </Box>
+
+        {/* Candidate Details Modal */}
+        <Modal isOpen={isOpen} onClose={onClose} size="4xl" scrollBehavior="inside">
+          <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
+          <ModalContent maxH="90vh" borderRadius="xl" boxShadow="2xl">
+            <ModalHeader bg="gradient-to-r from-teal.500 to-blue.500" color="white" borderTopRadius="xl">
+              <HStack spacing={3}>
+                <Avatar
+                  name={selectedCandidate?.name}
+                  size="md"
+                  bg="white"
+                  color="teal.500"
+                />
+                <VStack align="start" spacing={0}>
+                  <Text fontSize="xl" fontWeight="bold">
+                    {selectedCandidate?.name}
+                  </Text>
+                  <Text fontSize="sm" opacity={0.9}>
+                    Registration Details
+                  </Text>
+                </VStack>
+              </HStack>
+            </ModalHeader>
+            <ModalCloseButton color="white" />
+            
+            {selectedCandidate && (
+              <ModalBody p={6}>
+                <VStack spacing={6} align="stretch">
+                  {/* Payment Status Section */}
+                  <Box>
+                    <HStack justify="space-between" align="center" mb={4}>
+                      <Heading size="md" color="gray.700">
+                        Payment Information
+                      </Heading>
+                      <Tag
+                        size="lg"
+                        colorScheme={statusColors[selectedCandidate.paymentStatus] || "gray"}
+                        borderRadius="full"
+                        px={4}
+                        py={2}
+                      >
+                        {selectedCandidate.paymentStatus}
+                      </Tag>
+                    </HStack>
+                    
+                    <Grid templateColumns="repeat(auto-fit, minmax(250px, 1fr))" gap={4}>
+                      <GridItem>
+                        <Box bg="gray.50" p={4} borderRadius="lg" border="1px solid" borderColor="gray.200">
+                          <HStack spacing={3}>
+                            <Icon as={RepeatIcon} color="green.500" boxSize={5} />
+                            <VStack align="start" spacing={0}>
+                              <Text fontSize="sm" color="gray.600">Payment Amount</Text>
+                              <Text fontSize="lg" fontWeight="bold" color="green.600">
+                                ₹{selectedCandidate.paymentAmount || 'N/A'}
+                              </Text>
+                            </VStack>
+                          </HStack>
+                        </Box>
+                      </GridItem>
+                      
+                      <GridItem>
+                        <Box bg="gray.50" p={4} borderRadius="lg" border="1px solid" borderColor="gray.200">
+                          <HStack spacing={3}>
+                            <Icon as={ViewIcon} color="blue.500" boxSize={5} />
+                            <VStack align="start" spacing={0}>
+                              <Text fontSize="sm" color="gray.600">Order ID</Text>
+                              <Text fontSize="sm" fontWeight="semibold" noOfLines={1}>
+                                {selectedCandidate.orderId || 'N/A'}
+                              </Text>
+                            </VStack>
+                          </HStack>
+                        </Box>
+                      </GridItem>
+                      
+                      <GridItem>
+                        <Box bg="gray.50" p={4} borderRadius="lg" border="1px solid" borderColor="gray.200">
+                          <HStack spacing={3}>
+                            <Icon as={CalendarIcon} color="purple.500" boxSize={5} />
+                            <VStack align="start" spacing={0}>
+                              <Text fontSize="sm" color="gray.600">Payment Date</Text>
+                              <Text fontSize="sm" fontWeight="semibold">
+                                {selectedCandidate.paymentDate 
+                                  ? new Date(selectedCandidate.paymentDate).toLocaleDateString()
+                                  : 'N/A'
+                                }
+                              </Text>
+                            </VStack>
+                          </HStack>
+                        </Box>
+                      </GridItem>
+                      
+                      <GridItem>
+                        <Box bg="gray.50" p={4} borderRadius="lg" border="1px solid" borderColor="gray.200">
+                          <HStack spacing={3}>
+                            <Tag colorScheme="orange" size="sm">Method</Tag>
+                            <Text fontSize="sm" fontWeight="semibold">
+                              {selectedCandidate.paymentMethod || 'N/A'}
+                            </Text>
+                          </HStack>
+                        </Box>
+                      </GridItem>
+                    </Grid>
+                  </Box>
+
+                  <Divider />
+
+                  {/* Personal Information */}
+                  <Box>
+                    <Heading size="md" color="gray.700" mb={4}>
+                      Personal Information
+                    </Heading>
+                    
+                    <Grid templateColumns="repeat(auto-fit, minmax(300px, 1fr))" gap={4}>
+                      <GridItem>
+                        <VStack align="stretch" spacing={3}>
+                          <HStack>
+                            <Icon as={EmailIcon} color="teal.500" />
+                            <VStack align="start" spacing={0}>
+                              <Text fontSize="xs" color="gray.500">Email</Text>
+                              <Text fontSize="sm" fontWeight="medium">{selectedCandidate.email}</Text>
+                            </VStack>
+                          </HStack>
+                          
+                          <HStack>
+                            <Icon as={PhoneIcon} color="green.500" />
+                            <VStack align="start" spacing={0}>
+                              <Text fontSize="xs" color="gray.500">WhatsApp Number</Text>
+                              <Text fontSize="sm" fontWeight="medium">{selectedCandidate.whatsappNumber}</Text>
+                            </VStack>
+                          </HStack>
+                          
+                          <HStack>
+                            <Text fontSize="sm" color="gray.500" minW="60px">Gender:</Text>
+                            <Tag size="sm" colorScheme="purple">{selectedCandidate.gender}</Tag>
+                          </HStack>
+                          
+                          <HStack>
+                            <Text fontSize="sm" color="gray.500" minW="60px">DOB:</Text>
+                            <Text fontSize="sm" fontWeight="medium">
+                              {selectedCandidate.dob 
+                                ? new Date(selectedCandidate.dob).toLocaleDateString()
+                                : 'N/A'
+                              }
+                            </Text>
+                          </HStack>
+                        </VStack>
+                      </GridItem>
+                      
+                      <GridItem>
+                        <VStack align="stretch" spacing={3}>
+                          <HStack>
+                            <Text fontSize="sm" color="gray.500" minW="80px">Type:</Text>
+                            <Tag size="sm" colorScheme="blue">
+                              {selectedCandidate.collegeOrWorking}
+                            </Tag>
+                          </HStack>
+                          
+                          {selectedCandidate.collegeOrWorking === 'College' ? (
+                            <>
+                              <HStack>
+                                <Text fontSize="sm" color="gray.500" minW="80px">College:</Text>
+                                <Text fontSize="sm" fontWeight="medium" noOfLines={2}>
+                                  {selectedCandidate.college || 'N/A'}
+                                </Text>
+                              </HStack>
+                              
+                              <HStack>
+                                <Text fontSize="sm" color="gray.500" minW="80px">Course:</Text>
+                                <Text fontSize="sm" fontWeight="medium">
+                                  {selectedCandidate.course || 'N/A'}
+                                </Text>
+                              </HStack>
+                              
+                              <HStack>
+                                <Text fontSize="sm" color="gray.500" minW="80px">Year:</Text>
+                                <Text fontSize="sm" fontWeight="medium">
+                                  {selectedCandidate.year || 'N/A'}
+                                </Text>
+                              </HStack>
+                            </>
+                          ) : (
+                            <HStack>
+                              <Text fontSize="sm" color="gray.500" minW="80px">Company:</Text>
+                              <Text fontSize="sm" fontWeight="medium">
+                                {selectedCandidate.companyName || 'N/A'}
+                              </Text>
+                            </HStack>
+                          )}
+                        </VStack>
+                      </GridItem>
+                    </Grid>
+                  </Box>
+
+                  {/* Student ID Card Section */}
+                  {selectedCandidate.collegeOrWorking === 'College' && (
+                    <>
+                      <Divider />
+                      <Box>
+                        <Heading size="md" color="gray.700" mb={4}>
+                          Student ID Card
+                        </Heading>
+                        
+                        {selectedCandidate.studentIdCardUrl ? (
+                          <VStack spacing={4}>
+                            <Image
+                              src={selectedCandidate.studentIdCardUrl}
+                              alt="Student ID Card"
+                              maxH="300px"
+                              maxW="400px"
+                              objectFit="contain"
+                              borderRadius="lg"
+                              border="2px solid"
+                              borderColor="gray.200"
+                              boxShadow="md"
+                            />
+                            <Button
+                              colorScheme="blue"
+                              variant="outline"
+                              leftIcon={<ViewIcon />}
+                              onClick={() => window.open(selectedCandidate.studentIdCardUrl, '_blank')}
+                            >
+                              View Full Size
+                            </Button>
+                          </VStack>
+                        ) : (
+                          <Box
+                            p={8}
+                            textAlign="center"
+                            bg="red.50"
+                            border="2px dashed"
+                            borderColor="red.200"
+                            borderRadius="lg"
+                          >
+                            <WarningIcon color="red.400" boxSize={8} mb={2} />
+                            <Text color="red.600" fontWeight="medium">
+                              No ID Card Uploaded
+                            </Text>
+                            <Text fontSize="sm" color="red.500">
+                              Student verification may be required
+                            </Text>
+                          </Box>
+                        )}
+                      </Box>
+                    </>
+                  )}
+
+                  {/* Registration Info */}
+                  <Divider />
+                  <Box>
+                    <Heading size="md" color="gray.700" mb={4}>
+                      Registration Details
+                    </Heading>
+                    
+                    <Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap={4}>
+                      <GridItem>
+                        <Text fontSize="sm" color="gray.500">Registration Date</Text>
+                        <Text fontSize="sm" fontWeight="medium">
+                          {selectedCandidate.registrationDate
+                            ? new Date(selectedCandidate.registrationDate).toLocaleDateString()
+                            : 'N/A'
+                          }
+                        </Text>
+                      </GridItem>
+                      
+                      <GridItem>
+                        <Text fontSize="sm" color="gray.500">Serial Number</Text>
+                        <Text fontSize="sm" fontWeight="medium">
+                          {selectedCandidate.serialNo || 'N/A'}
+                        </Text>
+                      </GridItem>
+                      
+                      <GridItem>
+                        <Text fontSize="sm" color="gray.500">Attendance</Text>
+                        <HStack>
+                          {selectedCandidate.attendance ? (
+                            <>
+                              <CheckCircleIcon color="green.500" />
+                              <Text fontSize="sm" color="green.600" fontWeight="medium">Present</Text>
+                            </>
+                          ) : (
+                            <>
+                              <WarningIcon color="orange.400" />
+                              <Text fontSize="sm" color="orange.600" fontWeight="medium">Not Marked</Text>
+                            </>
+                          )}
+                        </HStack>
+                      </GridItem>
+                      
+                      <GridItem>
+                        <Text fontSize="sm" color="gray.500">Receipt</Text>
+                        <Text fontSize="sm" fontWeight="medium">
+                          {selectedCandidate.receipt || 'N/A'}
+                        </Text>
+                      </GridItem>
+                    </Grid>
+                  </Box>
+                </VStack>
+              </ModalBody>
+            )}
+            
+            <ModalFooter bg="gray.50" borderBottomRadius="xl" p={6}>
+              <HStack spacing={4} w="full" justify="center">
+                <Button
+                  colorScheme="green"
+                  leftIcon={<CheckIcon />}
+                  onClick={() => handleAction('accept', selectedCandidate._id)}
+                  isLoading={actionLoading[selectedCandidate?._id]}
+                  size="lg"
+                  px={8}
+                >
+                  Accept
+                </Button>
+                
+                <Button
+                  colorScheme="red"
+                  leftIcon={<CloseIcon />}
+                  onClick={() => handleAction('reject', selectedCandidate._id)}
+                  isLoading={actionLoading[selectedCandidate?._id]}
+                  size="lg"
+                  px={8}
+                >
+                  Reject
+                </Button>
+                
+                <Button
+                  colorScheme="orange"
+                  leftIcon={<RepeatIcon />}
+                  onClick={() => handleAction('refund', selectedCandidate._id)}
+                  isLoading={actionLoading[selectedCandidate?._id]}
+                  size="lg"
+                  px={8}
+                >
+                  Refund
+                </Button>
+                
+                <Button
+                  variant="ghost"
+                  onClick={onClose}
+                  size="lg"
+                  px={8}
+                >
+                  Close
+                </Button>
+              </HStack>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        {/* Confirmation Alert Dialog */}
+        <AlertDialog
+          isOpen={isAlertOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onAlertClose}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Confirm Action
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                Are you sure you want to <strong>{alertAction?.action}</strong> this candidate's registration?
+                This action will update their payment status and cannot be undone.
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={onAlertClose}>
+                  Cancel
+                </Button>
+                <Button
+                  colorScheme={alertAction?.action === 'accept' ? 'green' : 
+                           alertAction?.action === 'reject' ? 'red' : 'orange'}
+                  onClick={confirmAction}
+                  ml={3}
+                  isLoading={actionLoading[alertAction?.candidateId]}
+                >
+                  Confirm {alertAction?.action}
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
       </Box>
     </Layout>
   );
