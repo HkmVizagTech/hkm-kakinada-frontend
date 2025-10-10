@@ -35,23 +35,59 @@ export default function ThankYouPage() {
   const [candidate, setCandidate] = useState(null);
 
   useEffect(() => {
+    let attempts = 0;
+    const maxAttempts = 10; // Try for up to 30 seconds (10 attempts * 3 seconds)
+    let pollInterval;
+
     const verifyPayment = async () => {
       try {
+        console.log(`🔍 Verifying payment (attempt ${attempts + 1}/${maxAttempts})...`);
         const res = await axios.get(`https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/verify-payment/${id}`);
-        if (res.data.success) {
-          if (res.data.status === 'success') {
-            setCandidate(res.data.candidate);
+        
+        if (res.data.success && res.data.candidate) {
+          console.log("✅ Payment verification successful:", res.data.candidate);
+          setCandidate(res.data.candidate);
+          
+          // Check if payment is confirmed
+          if (res.data.candidate.paymentStatus === 'Paid') {
             setStatus('success');
-          } else {
-            setStatus('invalid');
+            if (pollInterval) clearInterval(pollInterval);
+            return;
+          } else if (attempts >= maxAttempts - 1) {
+            // After max attempts, if still pending, show pending status
+            setStatus('pending');
+            if (pollInterval) clearInterval(pollInterval);
+            return;
           }
+        } else if (attempts >= maxAttempts - 1) {
+          setStatus('invalid');
+          if (pollInterval) clearInterval(pollInterval);
+          return;
         }
+        
+        attempts++;
       } catch (err) {
-        setStatus('error');
+        console.error("❌ Payment verification error:", err);
+        attempts++;
+        if (attempts >= maxAttempts) {
+          setStatus('error');
+          if (pollInterval) clearInterval(pollInterval);
+        }
       }
     };
 
-    if (id) verifyPayment();
+    if (id) {
+      // First attempt immediately
+      verifyPayment();
+      
+      // Then poll every 3 seconds
+      pollInterval = setInterval(verifyPayment, 3000);
+    }
+
+    // Cleanup interval on unmount
+    return () => {
+      if (pollInterval) clearInterval(pollInterval);
+    };
   }, [id]);
 
   if (status === 'loading') {
@@ -59,6 +95,29 @@ export default function ThankYouPage() {
       <Center minH="100vh" bg="gray.50">
         <Spinner size="xl" color="teal.500" />
       </Center>
+    );
+  }
+
+  if (status === 'pending') {
+    return (
+      <Box textAlign="center" mt={20} p={6}>
+        <VStack spacing={4}>
+          <Spinner size="xl" color="orange.500" />
+          <Heading size="lg" color="orange.500">
+            Payment Processing
+          </Heading>
+          <Text>
+            Your payment is being processed. This may take a few minutes.
+            Please don't refresh the page or close the browser.
+          </Text>
+          <Text fontSize="sm" color="gray.600">
+            If this takes too long, please contact support with your payment ID: {id}
+          </Text>
+          <Button colorScheme="orange" variant="outline" onClick={() => window.location.reload()}>
+            Refresh Status
+          </Button>
+        </VStack>
+      </Box>
     );
   }
 
