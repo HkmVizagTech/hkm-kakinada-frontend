@@ -177,18 +177,18 @@ const CandidateExport = () => {
     
     try {
       const token = localStorage.getItem("token");
-      const endpoint = `https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/${candidateId}`;
+      let endpoint = '';
       
-      let updateData = {};
+      // Use new admin action endpoints
       switch (action) {
         case 'accept':
-          updateData = { paymentStatus: 'Paid', adminAction: 'Accepted', adminActionDate: new Date() };
+          endpoint = `https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/admin/accept/${candidateId}`;
           break;
         case 'reject':
-          updateData = { paymentStatus: 'Failed', adminAction: 'Rejected', adminActionDate: new Date() };
+          endpoint = `https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/admin/reject/${candidateId}`;
           break;
         case 'refund':
-          updateData = { paymentStatus: 'Refunded', adminAction: 'Refunded', adminActionDate: new Date() };
+          endpoint = `https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/admin/refund/${candidateId}`;
           break;
         default:
           console.error('Invalid action:', action);
@@ -196,31 +196,47 @@ const CandidateExport = () => {
       }
 
       const response = await fetch(endpoint, {
-        method: "PUT",
+        method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updateData),
       });
 
       if (response.ok) {
-        // Update local data
+        const result = await response.json();
+        
+        // Update local data with the returned candidate data
         setData(prevData => 
           prevData.map(candidate => 
             candidate._id === candidateId 
-              ? { ...candidate, ...updateData }
+              ? { ...candidate, ...result.data }
               : candidate
           )
         );
         
         // Update selected candidate if it's the same one
         if (selectedCandidate?._id === candidateId) {
-          setSelectedCandidate(prev => ({ ...prev, ...updateData }));
+          setSelectedCandidate(prev => ({ ...prev, ...result.data }));
+        }
+
+        let successMessage = '';
+        switch (action) {
+          case 'accept':
+            successMessage = 'Candidate accepted and WhatsApp notification sent!';
+            break;
+          case 'reject':
+            successMessage = 'Candidate rejected and WhatsApp notification sent!';
+            break;
+          case 'refund':
+            successMessage = 'Refund processed successfully!';
+            break;
+          default:
+            successMessage = `Candidate ${action}ed successfully`;
         }
 
         toast({
-          title: `Candidate ${action}ed successfully`,
+          title: successMessage,
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -953,8 +969,33 @@ const CandidateExport = () => {
               </AlertDialogHeader>
 
               <AlertDialogBody>
-                Are you sure you want to <strong>{alertAction?.action}</strong> this candidate's registration?
-                This action will update their payment status and cannot be undone.
+                {alertAction?.action === 'accept' && (
+                  <>
+                    Are you sure you want to <strong>accept</strong> this candidate's registration?
+                    <br/>
+                    <Text fontSize="sm" color="gray.600" mt={2}>
+                      ✅ A WhatsApp acceptance message will be sent to the candidate.
+                    </Text>
+                  </>
+                )}
+                {alertAction?.action === 'reject' && (
+                  <>
+                    Are you sure you want to <strong>reject</strong> this candidate's registration?
+                    <br/>
+                    <Text fontSize="sm" color="gray.600" mt={2}>
+                      ❌ A WhatsApp rejection message will be sent to the candidate.
+                    </Text>
+                  </>
+                )}
+                {alertAction?.action === 'refund' && (
+                  <>
+                    Are you sure you want to <strong>refund</strong> this candidate's payment?
+                    <br/>
+                    <Text fontSize="sm" color="gray.600" mt={2}>
+                      💰 The payment will be refunded through Razorpay. This action cannot be undone.
+                    </Text>
+                  </>
+                )}
               </AlertDialogBody>
 
               <AlertDialogFooter>
