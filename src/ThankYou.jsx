@@ -34,7 +34,7 @@ export default function ThankYouPage() {
   const [status, setStatus] = useState('loading');
   const [candidate, setCandidate] = useState(null);
 
-  const checkPaymentStatus = async (showLoading = true, forceCheck = false) => {
+  const checkPaymentStatus = async (showLoading = true) => {
     if (showLoading) setStatus('loading');
     
     try {
@@ -50,23 +50,6 @@ export default function ThankYouPage() {
           setStatus('success');
           return 'success';
         } else {
-          // If still pending and user requested force check, try the force endpoint
-          if (forceCheck) {
-            console.log("🔄 Trying force payment verification...");
-            try {
-              const forceRes = await axios.get(`https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/candidates/force-check-payment/${id}`);
-              
-              if (forceRes.data.status === 'success' && forceRes.data.candidate.paymentStatus === 'Paid') {
-                console.log("✅ Force check successful - payment confirmed!");
-                setCandidate(forceRes.data.candidate);
-                setStatus('success');
-                return 'success';
-              }
-            } catch (forceError) {
-              console.error("❌ Force check failed:", forceError);
-            }
-          }
-          
           setStatus('pending');
           return 'pending';
         }
@@ -83,7 +66,7 @@ export default function ThankYouPage() {
 
   useEffect(() => {
     let attempts = 0;
-    const maxAttempts = 15; // Extended to 45 seconds (15 attempts * 3 seconds)
+    const maxAttempts = 20; // Extended to 60 seconds (20 attempts * 3 seconds) - enough for auto-checker to run
     let pollInterval;
 
     const verifyPaymentWithPolling = async () => {
@@ -105,7 +88,7 @@ export default function ThankYouPage() {
       // First check immediately
       verifyPaymentWithPolling();
       
-      // Then poll every 3 seconds for up to 45 seconds
+      // Then poll every 3 seconds for up to 60 seconds
       pollInterval = setInterval(verifyPaymentWithPolling, 3000);
     }
 
@@ -132,29 +115,19 @@ export default function ThankYouPage() {
             Payment Processing
           </Heading>
           <Text>
-            Your payment is being processed. This may take a few minutes.
+            Your payment is being processed. This usually takes 1-2 minutes.
           </Text>
           <Text fontSize="sm" color="gray.600">
             Payment ID: {id}
           </Text>
           <Text fontSize="sm" color="gray.500">
-            If you closed this page earlier and came back, click "Check Status" to refresh.
+            Please wait... We're automatically checking your payment status.
           </Text>
-          <HStack spacing={3}>
-            <Button 
-              colorScheme="orange" 
-              variant="outline" 
-              onClick={() => checkPaymentStatus(true, true)}
-              isLoading={status === 'loading'}
-            >
-              Check Status
-            </Button>
-            <Button colorScheme="teal" variant="ghost" onClick={() => navigate('/')}>
-              Register Another
-            </Button>
-          </HStack>
+          <Button colorScheme="teal" variant="ghost" onClick={() => navigate('/')}>
+            Register Another Person
+          </Button>
           <Text fontSize="xs" color="gray.400">
-            Still pending? Contact support with your payment ID above.
+            Need help? Contact support with your payment ID above.
           </Text>
         </VStack>
       </Box>
