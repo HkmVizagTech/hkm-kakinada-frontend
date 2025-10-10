@@ -83,10 +83,20 @@ const AdminQrScanner = () => {
                 const res = await fetch(
                   "https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/admin/attendance-scan",
                   {
-                console.log("✅ Backend response:", response.data);
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ token: scannedText })
+                  }
+                );
+                
+                const response = await res.json();
+                console.log("✅ Backend response:", response);
                 setCandidate(response.data);
-                setStatus(response.data.status);
-                setMessage(response.data.message);
+                setStatus(response.status);
+                setMessage(response.message);
               } catch (e) {
                 console.error("❌ Error scanning QR:", e.response?.data || e.message);
                 

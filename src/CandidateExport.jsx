@@ -18,16 +18,13 @@ import {
   Tag,
   Tooltip,
   Text,
-  Stack,
   Badge,
   chakra,
   HStack,
   VStack,
-  Divider,
-  Avatar,
   Image,
 } from "@chakra-ui/react";
-import { CheckCircleIcon, WarningIcon, TimeIcon, EmailIcon, PhoneIcon, DownloadIcon } from "@chakra-ui/icons";
+import { CheckCircleIcon, WarningIcon, TimeIcon, PhoneIcon, DownloadIcon } from "@chakra-ui/icons";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { useNavigate } from "react-router-dom";
@@ -52,10 +49,9 @@ const CandidateExport = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        
-        setLoading(true);
+      const token = localStorage.getItem("token");
+      
+      setLoading(true);
       try {
         const response = await fetch("https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users", {
           method: "GET",

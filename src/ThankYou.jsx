@@ -37,14 +37,14 @@ export default function ThankYouPage() {
   useEffect(() => {
     const verifyPayment = async () => {
       try {
-        try {
         const res = await axios.get(`https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/verify-payment/${id}`);
         if (res.data.success) {
-        if (res.data.status === 'success') {
-          setCandidate(res.data.candidate);
-          setStatus('success');
-        } else {
-          setStatus('invalid');
+          if (res.data.status === 'success') {
+            setCandidate(res.data.candidate);
+            setStatus('success');
+          } else {
+            setStatus('invalid');
+          }
         }
       } catch (err) {
         setStatus('error');
