@@ -190,6 +190,9 @@ const CandidateExport = () => {
         case 'refund':
           updateData = { paymentStatus: 'Refunded', adminAction: 'Refunded' };
           break;
+        default:
+          console.error('Invalid action:', action);
+          return;
       }
 
       const response = await fetch(endpoint, {
