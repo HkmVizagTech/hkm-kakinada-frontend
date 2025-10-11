@@ -98,7 +98,7 @@ const AdminQrScanner = () => {
                 setStatus(response.status);
                 setMessage(response.message);
               } catch (e) {
-                console.error("❌ Error scanning QR:", e.response?.data || e.message);
+                console.error(" Error scanning QR:", e.response?.data || e.message);
                 
                 // Handle authentication errors
                 if (e.response?.status === 401 || e.response?.status === 403) {

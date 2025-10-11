@@ -17,8 +17,8 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
       }
 
       try {
-        console.log("🔐 Validating token:", token);
-        console.log("🎭 Stored role:", role);
+        console.log(" Validating token:", token);
+        console.log(" Stored role:", role);
         
         const response = await fetch("https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/admin/users/validate-token", {
           method: "POST",
@@ -28,23 +28,23 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
           }
         });
 
-        console.log("📡 Token validation response status:", response.status);
+        console.log(" Token validation response status:", response.status);
         
         if (response.ok) {
           const data = await response.json();
-          console.log("✅ Token validation successful:", data);
+          console.log(" Token validation successful:", data);
           setIsAuthenticated(true);
           setUserRole(data.user.role);
           localStorage.setItem("role", data.user.role);
         } else {
           const errorData = await response.text();
-          console.error("❌ Token validation failed:", response.status, errorData);
+          console.error(" Token validation failed:", response.status, errorData);
           localStorage.removeItem("token");
           localStorage.removeItem("role");
           setIsAuthenticated(false);
         }
       } catch (error) {
-        console.error("💥 Token validation error:", error);
+        console.error(" Token validation error:", error);
         localStorage.removeItem("token");
         localStorage.removeItem("role");
         setIsAuthenticated(false);

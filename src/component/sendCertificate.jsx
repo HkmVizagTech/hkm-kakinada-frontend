@@ -82,7 +82,7 @@ const SendCertificate = () => {
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
 
-  // API Base URL
+  
   const API_BASE_URL = 'https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users';
 
 

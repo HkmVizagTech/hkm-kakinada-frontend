@@ -179,7 +179,7 @@ const CandidateExport = () => {
       const token = localStorage.getItem("token");
       let endpoint = '';
       
-      // Use new admin action endpoints
+
       switch (action) {
         case 'accept':
           endpoint = `https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/admin/accept/${candidateId}`;
@@ -206,7 +206,7 @@ const CandidateExport = () => {
       if (response.ok) {
         const result = await response.json();
         
-        // Update local data with the returned candidate data
+    
         setData(prevData => 
           prevData.map(candidate => 
             candidate._id === candidateId 
@@ -599,7 +599,7 @@ const CandidateExport = () => {
                     )}
                   </Td>
                   
-                  {/* Admin Action Column */}
+                
                   <Td>
                     {candidate.adminAction ? (
                       <Tag
@@ -635,7 +635,6 @@ const CandidateExport = () => {
           </Table>
         </Box>
 
-        {/* Candidate Details Modal */}
         <Modal isOpen={isOpen} onClose={onClose} size="4xl" scrollBehavior="inside">
           <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
           <ModalContent maxH="90vh" borderRadius="xl" boxShadow="2xl">
@@ -662,7 +661,7 @@ const CandidateExport = () => {
             {selectedCandidate && (
               <ModalBody p={6}>
                 <VStack spacing={6} align="stretch">
-                  {/* Payment Status Section */}
+               
                   <Box>
                     <HStack justify="space-between" align="center" mb={4}>
                       <Heading size="md" color="gray.700">
@@ -740,7 +739,7 @@ const CandidateExport = () => {
 
                   <Divider />
 
-                  {/* Personal Information */}
+               
                   <Box>
                     <Heading size="md" color="gray.700" mb={4}>
                       Personal Information
@@ -827,7 +826,7 @@ const CandidateExport = () => {
                     </Grid>
                   </Box>
 
-                  {/* Student ID Card Section */}
+                 
                   {selectedCandidate.collegeOrWorking === 'College' && (
                     <>
                       <Divider />
@@ -880,7 +879,7 @@ const CandidateExport = () => {
                     </>
                   )}
 
-                  {/* Registration Info */}
+              
                   <Divider />
                   <Box>
                     <Heading size="md" color="gray.700" mb={4}>
@@ -1016,7 +1015,7 @@ const CandidateExport = () => {
           </ModalContent>
         </Modal>
 
-        {/* Confirmation Alert Dialog */}
+     
         <AlertDialog
           isOpen={isAlertOpen}
           leastDestructiveRef={cancelRef}
@@ -1034,7 +1033,7 @@ const CandidateExport = () => {
                     Are you sure you want to <strong>accept</strong> this candidate's registration?
                     <br/>
                     <Text fontSize="sm" color="gray.600" mt={2}>
-                      ✅ A WhatsApp acceptance message will be sent to the candidate.
+                       A WhatsApp acceptance message will be sent to the candidate.
                     </Text>
                   </>
                 )}
@@ -1043,7 +1042,7 @@ const CandidateExport = () => {
                     Are you sure you want to <strong>reject</strong> this candidate's registration?
                     <br/>
                     <Text fontSize="sm" color="gray.600" mt={2}>
-                      ❌ A WhatsApp rejection message will be sent to the candidate.
+                       A WhatsApp rejection message will be sent to the candidate.
                     </Text>
                   </>
                 )}

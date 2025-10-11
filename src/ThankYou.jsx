@@ -46,7 +46,7 @@ export default function ThankYouPage() {
         console.log("✅ Payment verification successful:", res.data.candidate);
         setCandidate(res.data.candidate);
         
-        // Check if payment is confirmed
+     
         if (res.data.candidate.paymentStatus === 'Paid') {
           setStatus('success');
           return 'success';
@@ -70,7 +70,7 @@ export default function ThankYouPage() {
 
   useEffect(() => {
     let attempts = 0;
-    const maxAttempts = 10; // 30 seconds (10 attempts * 3 seconds) - auto-checker runs every 10 seconds
+    const maxAttempts = 10; 
     let pollInterval;
 
     const verifyPaymentWithPolling = async () => {
@@ -89,14 +89,14 @@ export default function ThankYouPage() {
     };
 
     if (id) {
-      // First check immediately
+    
       verifyPaymentWithPolling();
       
-      // Then poll every 3 seconds for up to 30 seconds
+      
       pollInterval = setInterval(verifyPaymentWithPolling, 3000);
     }
 
-    // Cleanup interval on unmount
+  
     return () => {
       if (pollInterval) clearInterval(pollInterval);
     };
