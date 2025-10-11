@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import vanabhojanamLogo from './component/logo_harekrishnavizag.jpg';
+import vanabhojanamLogo from './component/newLogo.png';
 import natureBg from './component/vanabhojanam-nature.jpg'; 
 
 export default function ThankYouPage() {
@@ -112,6 +112,7 @@ export default function ThankYouPage() {
         bgPosition="center"
         style={{
           backgroundColor: "#e9f8ef",
+          backgroundBlendMode: "overlay",
         }}
       >
         <Spinner size="xl" color="teal.500" />
@@ -129,6 +130,7 @@ export default function ThankYouPage() {
         bgPosition="center"
         style={{
           backgroundColor: "#e9f8ef",
+          backgroundBlendMode: "overlay",
         }}
         py={8}
         px={4}
@@ -170,6 +172,7 @@ export default function ThankYouPage() {
         bgPosition="center"
         style={{
           backgroundColor: "#e9f8ef",
+          backgroundBlendMode: "overlay",
         }}
         py={8}
         px={4}
@@ -216,6 +219,7 @@ export default function ThankYouPage() {
         bgPosition="center"
         style={{
           backgroundColor: "#e9f8ef",
+          backgroundBlendMode: "overlay",
         }}
         py={8}
         px={4}
@@ -250,6 +254,7 @@ export default function ThankYouPage() {
       px={4}
       style={{
         backgroundColor: "#e9f8ef",
+        backgroundBlendMode: "overlay",
       }}
     >
       <Box maxW="2xl" mx="auto">
@@ -292,7 +297,7 @@ export default function ThankYouPage() {
         </Flex>
 
         <Box
-          bgGradient="linear(to-r, purple.500, pink.500)"
+          bgGradient="linear(to-r, #20603d, #43a047)"
           color="white"
           p={6}
           rounded="lg"
@@ -308,7 +313,7 @@ export default function ThankYouPage() {
 
         {candidate && (
           <Box bg="white" p={4} rounded="lg" shadow="md" mb={6}>
-            <Text fontWeight="bold" color="purple.600" mb={1}>
+            <Text fontWeight="bold" color="#20603d" mb={1}>
               Thank you, {candidate.name}!
             </Text>
             <Text fontSize="sm" color="gray.600">
@@ -321,30 +326,30 @@ export default function ThankYouPage() {
         <Box bg="white" p={6} rounded="lg" shadow="lg" mb={6}>
           <Stack spacing={6}>
             <Box textAlign="center">
-              <Heading size="md" color="purple.600" mb={2}>
+              <Heading size="md" color="#20603d" mb={2}>
                 Your Registration is Confirmed!
               </Heading>
             </Box>
 
             <VStack spacing={4} align="stretch">
-              <Flex align="center" gap={3} p={3} bg="purple.50" rounded="lg">
-                <Icon as={Calendar} w={5} h={5} color="purple.600" />
+              <Flex align="center" gap={3} p={3} bg="green.50" rounded="lg">
+                <Icon as={Calendar} w={5} h={5} color="#20603d" />
                 <Box>
                   <Text fontWeight="semibold">Event Date</Text>
                   <Text fontSize="sm" color="gray.600">Sunday, 9th November 2025</Text>
                 </Box>
               </Flex>
 
-              <Flex align="center" gap={3} p={3} bg="purple.50" rounded="lg">
-                <Icon as={MapPin} w={5} h={5} color="purple.600" />
+              <Flex align="center" gap={3} p={3} bg="green.50" rounded="lg">
+                <Icon as={MapPin} w={5} h={5} color="#20603d" />
                 <Box>
                   <Text fontWeight="semibold">Venue</Text>
                   <Text fontSize="sm" color="gray.600">Hare Krishna Vaikuntham Temple, Gambhiram</Text>
                 </Box>
               </Flex>
 
-              <Flex align="center" gap={3} p={3} bg="purple.50" rounded="lg">
-                <Icon as={Phone} w={5} h={5} color="purple.600" />
+              <Flex align="center" gap={3} p={3} bg="green.50" rounded="lg">
+                <Icon as={Phone} w={5} h={5} color="#20603d" />
                 <Box>
                   <Text fontWeight="semibold">WhatsApp Updates</Text>
                   <Text fontSize="sm" color="gray.600">
@@ -353,9 +358,9 @@ export default function ThankYouPage() {
                 </Box>
               </Flex>
 
-              <Flex align="center" gap={3} p={3} bg="purple.50" rounded="lg">
+              <Flex align="center" gap={3} p={3} bg="green.50" rounded="lg">
                 <Box>
-                  <Text fontWeight="semibold" color="purple.600">Highlights</Text>
+                  <Text fontWeight="semibold" color="#20603d">Highlights</Text>
                   <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={3} mt={2}>
                     <Box textAlign="center" fontSize="sm">
                       <Text fontWeight="semibold">Spiritual Talk</Text>
@@ -379,7 +384,7 @@ export default function ThankYouPage() {
               <HStack justify="center" spacing={4} fontSize="sm">
                 <Link
                   href="mailto:krishnapulse@gmail.com"
-                  color="purple.600"
+                  color="#20603d"
                   display="flex"
                   alignItems="center"
                   gap={1}
@@ -389,7 +394,7 @@ export default function ThankYouPage() {
                 </Link>
                 <Link
                   href="tel:+919876543210"
-                  color="purple.600"
+                  color="#20603d"
                   display="flex"
                   alignItems="center"
                   gap={1}
@@ -416,7 +421,7 @@ export default function ThankYouPage() {
           textAlign="center"
           mt={8}
           p={4}
-          bgGradient="linear(to-r, purple.500, pink.500)"
+          bgGradient="linear(to-r, #20603d, #43a047)"
           color="white"
           rounded="lg"
         >

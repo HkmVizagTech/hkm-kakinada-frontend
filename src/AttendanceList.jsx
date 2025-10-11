@@ -123,7 +123,7 @@ const AttendanceList = () => {
         Name: row.name,
         Gender: row.gender,
         Email: row.email,
-        College: row.college,
+        'College/Company': row.college,
         Branch: row.branch,
         Phone: row.whatsappNumber,
         Attendance: row.attendance ? 'Yes' : 'No',
@@ -192,10 +192,10 @@ const AttendanceList = () => {
           boxShadow="sm"
         >
           <Flex gap={4} align="flex-end" wrap="nowrap" minW="600px">
-            <FormControl w="180px">
-              <FormLabel fontSize="sm">College</FormLabel>
+            <FormControl w="200px">
+              <FormLabel fontSize="sm">College/Company</FormLabel>
               <Select
-                placeholder="Select College"
+                placeholder="Select College/Company"
                 onChange={e => setFilteredCollege(e.target.value)}
                 value={filteredCollege}
                 bg="gray.50"
@@ -255,7 +255,7 @@ const AttendanceList = () => {
                 <Th>Name</Th>
                 <Th>Gender</Th>
                 <Th>Phone</Th>
-                <Th>College</Th>
+                <Th minW="180px">College/Company</Th>
                 <Th>Branch</Th>
                 <Th>Email</Th>
                 <Th>Attendance</Th>
@@ -281,8 +281,10 @@ const AttendanceList = () => {
                       </HStack>
                     </Tooltip>
                   </Td>
-                  <Td>
-                    <Text fontSize="sm">{candidate.college}</Text>
+                  <Td minW="180px">
+                    <Text fontSize="sm" wordBreak="break-word" lineHeight="1.4">
+                      {candidate.college}
+                    </Text>
                   </Td>
                   <Td>{candidate.branch}</Td>
                   <Td>

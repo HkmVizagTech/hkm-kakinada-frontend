@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import image12 from './component/vanabhojanam.jpg';
+import image12 from './component/newLogo.png';
 
 import {
   Box,
@@ -25,7 +25,8 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Divider
+  Divider,
+  SimpleGrid
 } from "@chakra-ui/react";
 import { CalendarIcon } from "@chakra-ui/icons";
 import Select from "react-select";
@@ -436,14 +437,13 @@ const Main = () => {
                   <Text fontSize="lg">🏛️</Text>
                   <Text 
                     fontWeight="semibold" 
-                    fontSize={{ base: "md", md: "lg" }} 
+                    fontSize={{ base: "sm", md: "lg" }} 
                     color="gray.700"
-                    whiteSpace="nowrap"
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    maxW={{ base: "250px", md: "none" }}
+                    whiteSpace="normal"
+                    lineHeight="1.3"
+                    textAlign={{ base: "center", md: "left" }}
                   >
-                    HK Vaikuntham Temple, Gambhiram
+                    Hare Krishna Vaikuntam Temple, IIM Road, Gambheeram
                   </Text>
                 </HStack>
               </VStack>
@@ -497,24 +497,62 @@ const Main = () => {
         >
           <CardBody>
             <Divider my={2} />
-            <Flex justify="space-between" align="center" wrap="wrap" mt={3}>
-              <VStack>
-                <CalendarIcon color="#20603d" boxSize={7} />
-                <Text fontWeight="medium" fontSize="sm" color="#20603d">Spiritual Talk</Text>
+            <SimpleGrid 
+              columns={{ base: 2, md: 4 }} 
+              spacing={{ base: 4, md: 6 }}
+              mt={3}
+              alignItems="center"
+              justifyItems="center"
+            >
+              <VStack spacing={2}>
+                <CalendarIcon color="#20603d" boxSize={{ base: 6, md: 7 }} />
+                <Text 
+                  fontWeight="medium" 
+                  fontSize={{ base: "xs", md: "sm" }} 
+                  color="#20603d"
+                  textAlign="center"
+                  lineHeight="1.2"
+                >
+                  Spiritual Talk
+                </Text>
               </VStack>
-              <VStack>
-                <Text fontSize="2xl">🎮</Text>
-                <Text fontWeight="medium" fontSize="sm" color="#20603d">Games</Text>
+              <VStack spacing={2}>
+                <Text fontSize={{ base: "xl", md: "2xl" }}>🎮</Text>
+                <Text 
+                  fontWeight="medium" 
+                  fontSize={{ base: "xs", md: "sm" }} 
+                  color="#20603d"
+                  textAlign="center"
+                  lineHeight="1.2"
+                >
+                  Games
+                </Text>
               </VStack>
-              <VStack>
-                <Text fontSize="2xl">💃</Text>
-                <Text fontWeight="medium" fontSize="sm" color="#20603d">Ecstatic Dances</Text>
+              <VStack spacing={2}>
+                <Text fontSize={{ base: "xl", md: "2xl" }}>💃</Text>
+                <Text 
+                  fontWeight="medium" 
+                  fontSize={{ base: "xs", md: "sm" }} 
+                  color="#20603d"
+                  textAlign="center"
+                  lineHeight="1.2"
+                >
+                  Ecstatic Dances
+                </Text>
               </VStack>
-              <VStack>
-                <Text fontSize="2xl">🍛</Text>
-                <Text fontWeight="medium" fontSize="sm" color="#20603d">Delicious Prasadam</Text>
+              <VStack spacing={2}>
+                <Text fontSize={{ base: "xl", md: "2xl" }}>🍛</Text>
+                <Text 
+                  fontWeight="medium" 
+                  fontSize={{ base: "xs", md: "sm" }} 
+                  color="#20603d"
+                  textAlign="center"
+                  lineHeight="1.2"
+                >
+                  Delicious Prasadam
+                </Text>
               </VStack>
-            </Flex>
+            </SimpleGrid>
           </CardBody>
         </Card>
         <Card
