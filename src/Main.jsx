@@ -476,7 +476,7 @@ const Main = () => {
                       ₹99 / ₹1200
                     </Text>
                     <Text fontWeight="bold" fontSize="xs" color="#20603d" textAlign="center">
-                      Student / Professional
+                     College Student / others
                     </Text>
                   </VStack>
                 )}
@@ -633,7 +633,7 @@ const Main = () => {
                 <FormErrorMessage>{errors.gender}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!errors.collegeOrWorking}>
-                <FormLabel color="#20603d">Are you a College Student or Working Professional? <Text as="span" color="red.500">*</Text></FormLabel>
+                <FormLabel color="#20603d">Are you a College Student or Others? <Text as="span" color="red.500">*</Text></FormLabel>
                 <ChakraSelect
                   value={formData.collegeOrWorking}
                   onChange={(e) => handleInputChange("collegeOrWorking", e.target.value)}
@@ -643,7 +643,7 @@ const Main = () => {
                 >
                   <option value="">--Select--</option>
                   <option value="College">College Student</option>
-                  <option value="Working">Working Professional</option>
+                  <option value="Working">others</option>
                 </ChakraSelect>
                 <FormErrorMessage>{errors.collegeOrWorking}</FormErrorMessage>
                 {formData.collegeOrWorking === "College" && (
