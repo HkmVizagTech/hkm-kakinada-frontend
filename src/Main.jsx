@@ -53,7 +53,7 @@ const initialState = {
 
 const RAZORPAY_KEY = "rzp_live_HBAc3tlMK0X5Xd";
 
-const API_BASE = "https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users";
+const API_BASE = "https://hkm-kakinada-882278565284.asia-south1.run.app/users";
 
 const Main = () => {
   const toast = useToast();

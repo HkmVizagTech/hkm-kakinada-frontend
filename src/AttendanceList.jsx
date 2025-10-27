@@ -47,7 +47,7 @@ const AttendanceList = () => {
       const token = localStorage.getItem("token");
       
       try {
-        const response = await fetch('https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/attendance-list', {
+        const response = await fetch('https://hkm-kakinada-882278565284.asia-south1.run.app/users/attendance-list', {
           method: 'GET',
           headers: {
             "Authorization": `Bearer ${token}`,

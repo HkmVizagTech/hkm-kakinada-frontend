@@ -81,7 +81,7 @@ const AdminQrScanner = () => {
                 const token = localStorage.getItem("token");
                 
                 const res = await fetch(
-                  "https://hkm-vanabhojan-backend-882278565284.europe-west1.run.app/users/admin/attendance-scan",
+                  "https://hkm-kakinada-882278565284.asia-south1.run.app/users/admin/attendance-scan",
                   {
                     method: "POST",
                     headers: {
