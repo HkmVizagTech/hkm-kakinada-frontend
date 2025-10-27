@@ -430,7 +430,7 @@ const Main = () => {
                 <HStack>
                   <CalendarIcon color="#20603d" boxSize={5} />
                   <Text fontWeight="bold" fontSize={{ base: "md", md: "lg" }} color="#20603d">
-                    Sunday, 9th November 2025
+                    Sunday, 16th November 2025
                   </Text>
                 </HStack>
                 <HStack>
@@ -443,7 +443,7 @@ const Main = () => {
                     lineHeight="1.3"
                     textAlign={{ base: "center", md: "left" }}
                   >
-                    Hare Krishna Vaikuntam Temple, IIM Road, Gambheeram
+                    Ratna siri Food Court & Resort,NTR Beach park,vakalapudi,Kakinada
                   </Text>
                 </HStack>
               </VStack>
@@ -810,7 +810,7 @@ const Main = () => {
                 }
               </Button>
               <Text textAlign="center" fontSize="md" mt={4} color="#20603d">
-                For any queries, contact us at <Text as="a" href="mailto:krishnapulse@gmail.com" textDecoration="underline">krishnapulse@gmail.com</Text>
+                For any queries, contact us at <Text as="a" href="mailto:gdhd@hkmvizag.org" textDecoration="underline">krishnapulse@gmail.com</Text>
               </Text>
             </VStack>
           </CardBody>
