@@ -810,7 +810,7 @@ const Main = () => {
                 }
               </Button>
               <Text textAlign="center" fontSize="md" mt={4} color="#20603d">
-                For any queries, contact us at <Text as="a" href="mailto:gdhd@hkmvizag.org" textDecoration="underline">krishnapulse@gmail.com</Text>
+                For any queries, contact us at <Text as="a" href="mailto:gdhd@hkmvizag.org" textDecoration="underline">gdhd@hkmvizag.org</Text>
               </Text>
             </VStack>
           </CardBody>
