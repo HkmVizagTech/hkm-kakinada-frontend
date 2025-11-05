@@ -227,7 +227,7 @@ const Main = () => {
     if (!validateForm()) return;
     setIsSubmitting(true);
     try {
-      const baseAmount = formData.collegeOrWorking === "College" ? 99 : 1200;
+      const baseAmount = formData.collegeOrWorking === "College" ? 49 : 1200;
       const amountInPaise = baseAmount * 100;
 
       let orderData;
@@ -455,7 +455,7 @@ const Main = () => {
                 {formData.collegeOrWorking === "College" ? (
                   <VStack spacing={1}>
                     <Text fontWeight="black" fontSize="2xl" color="#388e3c">
-                      ₹99
+                      ₹49
                     </Text>
                     <Text fontWeight="bold" fontSize="xs" color="#388e3c" textAlign="center">
                       Student Rate
@@ -473,7 +473,7 @@ const Main = () => {
                 ) : (
                   <VStack spacing={1}>
                     <Text fontWeight="black" fontSize="xl" color="#20603d">
-                      ₹99 / ₹1200
+                      ₹49 / ₹1200
                     </Text>
                     <Text fontWeight="bold" fontSize="xs" color="#20603d" textAlign="center">
                      College Student / others
@@ -652,7 +652,7 @@ const Main = () => {
                       <Text fontSize="sm">ℹ️</Text>
                       <Text fontSize="sm" color="#20603d" fontWeight="medium">
                         <Text as="span" fontWeight="bold">Note:</Text> Student ID card is mandatory for verification at the event.
-                        Registration fee: <Text as="span" fontWeight="bold" color="#388e3c">₹99</Text>
+                        Registration fee: <Text as="span" fontWeight="bold" color="#388e3c">₹49</Text>
                       </Text>
                     </HStack>
                   </Box>
@@ -803,7 +803,7 @@ const Main = () => {
                 type="button"
               >
                 {formData.collegeOrWorking === "College"
-                  ? "Register Now for ₹99 (Student)"
+                  ? "Register Now for ₹49 (Student)"
                   : formData.collegeOrWorking === "Working"
                   ? "Register Now for ₹1200 (Professional)"
                   : "Register Now"
