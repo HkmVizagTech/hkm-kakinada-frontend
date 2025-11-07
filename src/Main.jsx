@@ -208,8 +208,8 @@ const Main = () => {
     if (collegeOrWorking === "College" && !course.trim()) newErrors.course = "Course is required";
     if (collegeOrWorking === "College" && !year)
       newErrors.year = "Year is required";
-    if (collegeOrWorking === "College" && !studentIdCard)
-      newErrors.studentIdCard = "Please upload your student ID card";
+    // if (collegeOrWorking === "College" && !studentIdCard)
+    //   newErrors.studentIdCard = "Please upload your student ID card";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -744,7 +744,7 @@ const Main = () => {
                   <FormErrorMessage>{errors.year}</FormErrorMessage>
                 </FormControl>
               )}
-              {formData.collegeOrWorking === "College" && (
+              {/* {formData.collegeOrWorking === "College" && (
                 <FormControl isInvalid={!!errors.studentIdCard}>
                   <FormLabel color="#20603d">Student ID Card <Text as="span" color="red.500">*</Text></FormLabel>
                   <Text fontSize="sm" color="gray.600" mb={2}>
@@ -786,7 +786,7 @@ const Main = () => {
                     </Box>
                   )}
                 </FormControl>
-              )}
+              )} */}
               <Button
                 onClick={handlePayment}
                 isLoading={isSubmitting}

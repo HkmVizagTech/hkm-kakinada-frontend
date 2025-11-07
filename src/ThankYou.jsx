@@ -336,7 +336,7 @@ export default function ThankYouPage() {
                 <Icon as={Calendar} w={5} h={5} color="#20603d" />
                 <Box>
                   <Text fontWeight="semibold">Event Date</Text>
-                  <Text fontSize="sm" color="gray.600">Sunday, 9th November 2025</Text>
+                  <Text fontSize="sm" color="gray.600">Sunday, 16th November 2025</Text>
                 </Box>
               </Flex>
 
@@ -344,7 +344,7 @@ export default function ThankYouPage() {
                 <Icon as={MapPin} w={5} h={5} color="#20603d" />
                 <Box>
                   <Text fontWeight="semibold">Venue</Text>
-                  <Text fontSize="sm" color="gray.600">Hare Krishna Vaikuntham Temple, Gambhiram</Text>
+                  <Text fontSize="sm" color="gray.600">Ratna siri Food Court & Resort,NTR Beach park,vakalapudi,Kakinada</Text>
                 </Box>
               </Flex>
 
@@ -383,7 +383,7 @@ export default function ThankYouPage() {
               <Text fontSize="sm" fontWeight="semibold" mb={2}>Need Help?</Text>
               <HStack justify="center" spacing={4} fontSize="sm">
                 <Link
-                  href="mailto:krishnapulse@gmail.com"
+                  href="mailto:gdhd@hkmvizag.org"
                   color="#20603d"
                   display="flex"
                   alignItems="center"
