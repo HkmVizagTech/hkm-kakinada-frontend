@@ -393,7 +393,7 @@ export default function ThankYouPage() {
                   Email Support
                 </Link>
                 <Link
-                  href="tel:+919876543210"
+                  href="tel:+917075497108"
                   color="#20603d"
                   display="flex"
                   alignItems="center"
